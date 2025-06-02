@@ -1,16 +1,36 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
+import { EmployeeComponent } from '../employee/employee.component';
+import { ChartModule } from 'primeng/chart';
 
-import { ManagerService } from './manager.service';
+describe('EmployeeComponent', () => {
+  let component: EmployeeComponent;
+  let fixture: ComponentFixture<EmployeeComponent>;
 
-describe('ManagerService', () => {
-  let service: ManagerService;
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, FormsModule, ChartModule],
+      declarations: [EmployeeComponent]
+    }).compileComponents();
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ManagerService);
+    fixture = TestBed.createComponent(EmployeeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should initialize with empty data', () => {
+    expect(component.calles.length).toBeGreaterThan(0);
+    expect(component.vecinos.length).toBe(0);
+    expect(component.selectedCalle).toBeTruthy();
+  });
+
+  it('should initialize chart options', () => {
+    expect(component.chartOptions).toBeDefined();
+    expect(component.chartOptions.responsive).toBeTrue();
   });
 });

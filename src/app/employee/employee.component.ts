@@ -35,7 +35,18 @@ interface Alarma {
 export class EmployeeComponent implements OnInit {
   vecinos: Vecino[] = [];
   selectedCalle: string | null = null;
-  calles: string[] = [];
+  calles: string[] = [
+    'Avenida Primavera',
+    'Calle 1',
+    'Calle 2',
+    'Calle 3',
+    'Calle 4',
+    'Calle 5',
+    'Calle 6',
+    'Calle 7',
+    'Calle 8',
+    'Calle 9'
+  ];
   alarmas: Alarma[] = [];
   porcentajeHombres: number = 0;
   cantidadHombres: number = 0;
@@ -50,7 +61,7 @@ export class EmployeeComponent implements OnInit {
 
   ngOnInit(): void {
     this.initChartOptions();
-    this.fetchCalles();
+    this.selectedCalle = this.calles[0];
     this.fetchVecinos();
     this.fetchAlarmas();
     this.fetchEstadisticas();
@@ -75,18 +86,6 @@ export class EmployeeComponent implements OnInit {
         }
       }
     };
-  }
-
-  fetchCalles(): void {
-    this.managerService.getCalles().subscribe({
-      next: (data) => {
-        this.calles = data;
-        if (data.length > 0) {
-          this.selectedCalle = data[0];
-        }
-      },
-      error: (err) => console.error('Error fetching calles:', err)
-    });
   }
 
   fetchVecinos(): void {
@@ -128,7 +127,7 @@ export class EmployeeComponent implements OnInit {
     this.chartData = {
       labels: ['Hombres', 'Mujeres'],
       datasets: [{
-        data: [this.cantidadHombres, 100 - this.cantidadHombres], // Ajustar según tus datos reales
+        data: [this.cantidadHombres, 100 - this.cantidadHombres],
         backgroundColor: ['#4285F4', '#34A853'],
         borderWidth: 0
       }]
@@ -142,9 +141,20 @@ export class EmployeeComponent implements OnInit {
     }
     this.loading = true;
     this.managerService.getVecinosPorCalle(this.selectedCalle).subscribe({
-      next: (data) => {
-        this.vecinos = data;
-        this.loading = false;
+      next: (vecinos) => {
+        this.vecinos = vecinos;
+        this.managerService.getEstadisticasPorCalle(this.selectedCalle!).subscribe({
+          next: (estadisticas) => {
+            this.porcentajeHombres = estadisticas.porcentajeHombres || 0;
+            this.cantidadHombres = estadisticas.cantidadHombres || 0;
+            this.updateChartData();
+            this.loading = false;
+          },
+          error: (err) => {
+            console.error('Error:', err);
+            this.loading = false;
+          }
+        });
       },
       error: (err) => {
         console.error('Error:', err);

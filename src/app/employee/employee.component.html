@@ -1,30 +1,34 @@
 <div class="container">
   <div class="sidebar">
-    <h3>Calles</h3>
+    <h3>Selección de Calle</h3>
     <select [(ngModel)]="selectedCalle" class="manager-select">
       <option *ngFor="let calle of calles" [value]="calle">
         {{ calle }}
       </option>
     </select>
     <button (click)="onSearch()" class="search-button" [disabled]="!selectedCalle">
-      Buscar
+      Consultar Datos
     </button>
   </div>
 
   <div class="main-content">
-    <div *ngIf="loading" class="loading">Cargando...</div>
+    <div *ngIf="loading" class="loading">Cargando datos...</div>
 
     <div *ngIf="vecinos.length > 0" class="results">
-      <h3>Vecinos en {{selectedCalle}}: {{vecinos.length}}</h3>
-      <h3>Porcentaje de hombres con alarmas: {{porcentajeHombres}}%</h3>
+      <h2>Resumen de Residentes en {{selectedCalle}}</h2>
+      <div class="results-info">
+        <p>Total de residentes: <strong>{{vecinos.length}}</strong></p>
+        <p>Porcentaje de hombres con alarmas activas: <strong>{{porcentajeHombres}}%</strong></p>
+      </div>
 
+      <h3>Distribución por Género</h3>
       <div class="compact-chart-container">
         <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"
           [style]="{ height: '240px', width: '100%' }">
         </p-chart>
       </div>
 
-      <h3>Lista de Vecinos</h3>
+      <h3>Registro de Residentes</h3>
       <table>
         <thead>
           <tr>
@@ -48,7 +52,7 @@
         </tbody>
       </table>
 
-      <h3>Últimas Alarmas</h3>
+      <h3>Historial de Alarmas Recientes</h3>
       <table>
         <thead>
           <tr>
@@ -74,7 +78,7 @@
     </div>
 
     <div *ngIf="vecinos.length === 0 && !loading" class="no-results">
-      Selecciona una calle y haz clic en "Buscar" para ver los vecinos
+      Selecciona una calle y haz clic en "Consultar Datos" para ver la información
     </div>
   </div>
 </div>
