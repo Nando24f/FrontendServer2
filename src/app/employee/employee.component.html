@@ -48,7 +48,26 @@
         </div>
       </div>
 
-      <!-- Resto del contenido permanece igual -->
+      <!-- Estadísticas de calle seleccionada -->
+      <div class="stats-container" *ngIf="estadisticasCalle.totalVecinos > 0">
+        <h3>Estadísticas para {{ selectedCalle }}</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Total Vecinos</div>
+            <div class="stat-value">{{ estadisticasCalle.totalVecinos }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Hombres</div>
+            <div class="stat-value">{{ estadisticasCalle.totalHombres }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Mujeres</div>
+            <div class="stat-value">{{ estadisticasCalle.totalMujeres }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas de Alarmas -->
       <div class="stats-container">
         <h3>Estadísticas de Alarmas</h3>
         <div class="stats-grid">
@@ -62,8 +81,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Resto del template... -->
     </div>
   </div>
 </div>

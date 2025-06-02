@@ -1,4 +1,3 @@
-// employee.component.spec.ts
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +15,16 @@ describe('EmployeeComponent', () => {
     mockManagerService = jasmine.createSpyObj('ManagerService', [
       'getCalles', 
       'getVecinos',
-      'getVecinosPorCalle'  // Changed from getVecinosPorCalleTodas to getVecinosPorCalle
+      'getVecinosPorCalleTodas',
+      'getVecinosPorCalle',
+      'getHombresPorCalle',
+      'getMujeresPorCalle',
+      'getAdministradores',
+      'getAlarmas',
+      'getPorcentajeHombresAlarmas',
+      'getPorcentajeMujeresAlarmas',
+      'getCantidadHombres',
+      'getCantidadMujeres'
     ]);
     
     await TestBed.configureTestingModule({
@@ -30,16 +38,16 @@ describe('EmployeeComponent', () => {
     fixture = TestBed.createComponent(EmployeeComponent);
     component = fixture.componentInstance;
     
-    // Configura respuestas mock
+    // Configurar respuestas mock
     mockManagerService.getCalles.and.returnValue(of(['Calle 1', 'Calle 2']));
-    mockManagerService.getVecinos.and.returnValue(of([
-      { id: 1, nombre: 'Juan', calle: 'Calle 1', sexo: 'Masculino' },
-      { id: 2, nombre: 'Maria', calle: 'Calle 1', sexo: 'Femenino' }
-    ]));
-    mockManagerService.getVecinosPorCalle.and.returnValue(of([  // Changed from getVecinosPorCalleTodas to getVecinosPorCalle
+    mockManagerService.getVecinos.and.returnValue(of([]));
+    mockManagerService.getVecinosPorCalleTodas.and.returnValue(of([
       { calle: 'Avenida Primavera', cantidad: 45 },
       { calle: 'Calle 1', cantidad: 32 }
     ]));
+    mockManagerService.getVecinosPorCalle.and.returnValue(of([{ cantidad_vecinos: 10 }]));
+    mockManagerService.getHombresPorCalle.and.returnValue(of([{ cantidad_hombres: 5 }]));
+    mockManagerService.getMujeresPorCalle.and.returnValue(of([{ cantidad_mujeres: 5 }]));
 
     fixture.detectChanges();
   });
@@ -48,9 +56,16 @@ describe('EmployeeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load streets and residents', () => {
+  it('should load initial data', () => {
     expect(mockManagerService.getCalles).toHaveBeenCalled();
-    expect(mockManagerService.getVecinos).toHaveBeenCalled();
-    expect(mockManagerService.getVecinosPorCalle).toHaveBeenCalled();  // Changed from getVecinosPorCalleTodas to getVecinosPorCalle
+    expect(mockManagerService.getVecinosPorCalleTodas).toHaveBeenCalled();
+  });
+
+  it('should search by street', () => {
+    component.selectedCalle = 'Calle 1';
+    component.onSearch();
+    expect(mockManagerService.getVecinosPorCalle).toHaveBeenCalledWith('Calle 1');
+    expect(mockManagerService.getHombresPorCalle).toHaveBeenCalledWith('Calle 1');
+    expect(mockManagerService.getMujeresPorCalle).toHaveBeenCalledWith('Calle 1');
   });
 });

@@ -55,7 +55,6 @@ interface VecinosPorCalle {
   imports: [FormsModule, ChartModule, CommonModule]
 })
 export class EmployeeComponent implements OnInit {
-  // Datos generales
   estadisticas: Estadisticas = {
     totalVecinos: 0,
     totalHombres: 0,
@@ -67,7 +66,6 @@ export class EmployeeComponent implements OnInit {
     porcentajeMujeres: 0
   };
 
-  // Datos por calle
   selectedCalle: string | null = null;
   calles: string[] = [
     'Avenida Primavera',
@@ -81,18 +79,17 @@ export class EmployeeComponent implements OnInit {
     'Calle 8',
     'Calle 9'
   ];
+  
   estadisticasCalle: EstadisticasCalle = {
     totalVecinos: 0,
     totalHombres: 0,
     totalMujeres: 0
   };
 
-  // Listas
   vecinos: Vecino[] = [];
   administradores: Vecino[] = [];
   alarmas: Alarma[] = [];
 
-  // UI
   loading: boolean = false;
   chartData: any = {};
   chartOptions: any;
@@ -171,7 +168,7 @@ export class EmployeeComponent implements OnInit {
   fetchAllData(): void {
     this.loading = true;
 
-    // 1. Obtener calles (complementar con las que ya tenemos)
+    // Obtener calles
     this.managerService.getCalles().subscribe({
       next: (calles) => {
         if (calles && calles.length > 0) {
@@ -182,7 +179,7 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching calles:', err)
     });
 
-    // 2. Obtener vecinos (no administradores)
+    // Obtener vecinos
     this.managerService.getVecinos().subscribe({
       next: (vecinos) => {
         this.vecinos = vecinos;
@@ -191,7 +188,7 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching vecinos:', err)
     });
 
-    // 3. Obtener administradores
+    // Obtener administradores
     this.managerService.getAdministradores().subscribe({
       next: (administradores) => {
         this.administradores = administradores;
@@ -199,7 +196,7 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching administradores:', err)
     });
 
-    // 4. Obtener alarmas
+    // Obtener alarmas
     this.managerService.getAlarmas().subscribe({
       next: (alarmas) => {
         this.alarmas = alarmas;
@@ -208,7 +205,7 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching alarmas:', err)
     });
 
-    // 5. Obtener cantidad de hombres
+    // Obtener cantidad de hombres
     this.managerService.getCantidadHombres().subscribe({
       next: (data) => {
         this.estadisticas.totalHombres = data[0]?.cantidad_hombres || 0;
@@ -217,7 +214,7 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching cantidad hombres:', err)
     });
 
-    // 6. Obtener cantidad de mujeres
+    // Obtener cantidad de mujeres
     this.managerService.getCantidadMujeres().subscribe({
       next: (data) => {
         this.estadisticas.totalMujeres = data[0]?.cantidad_mujeres || 0;
@@ -226,7 +223,7 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching cantidad mujeres:', err)
     });
 
-    // 7. Obtener porcentaje hombres con alarmas
+    // Obtener porcentaje hombres con alarmas
     this.managerService.getPorcentajeHombresAlarmas().subscribe({
       next: (data) => {
         this.estadisticas.porcentajeHombres = data[0]?.porcentaje_hombres || 0;
@@ -234,7 +231,7 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching porcentaje hombres:', err)
     });
 
-    // 8. Obtener porcentaje mujeres con alarmas
+    // Obtener porcentaje mujeres con alarmas
     this.managerService.getPorcentajeMujeresAlarmas().subscribe({
       next: (data) => {
         this.estadisticas.porcentajeMujeres = data[0]?.porcentaje_mujeres || 0;
@@ -242,8 +239,8 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching porcentaje mujeres:', err)
     });
 
-    // 9. Obtener distribución por calles
-    this.managerService.getVecinosPorCalle('all').subscribe({ // Or whatever parameter you need
+    // Obtener distribución por calles para el gráfico
+    this.managerService.getVecinosPorCalleTodas().subscribe({
       next: (data: VecinosPorCalle[]) => {
         this.updateChartDataPorCalle(data);
       },
@@ -269,7 +266,7 @@ export class EmployeeComponent implements OnInit {
 
   updateChartDataPorCalle(data: VecinosPorCalle[]): void {
     const sortedData = [...data].sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
-
+    
     this.chartDataPorCalle = {
       labels: sortedData.map(item => item.calle),
       datasets: [{
