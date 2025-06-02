@@ -1,15 +1,12 @@
 <!-- employee.component.html -->
 <div class="container">
   <div class="sidebar">
-    <h3>Selección de Calle</h3>
-    <select [(ngModel)]="selectedCalle" class="manager-select" (change)="onSearch()">
-      <option *ngFor="let calle of calles" [value]="calle">
-        {{ calle }}
+    <h3>Seleccionar Calle</h3>
+    <select [(ngModel)]="selectedStreet" (change)="onStreetChange()" class="street-select">
+      <option *ngFor="let street of streets" [value]="street">
+        {{ street }}
       </option>
     </select>
-    <button (click)="onSearch()" class="search-button" [disabled]="!selectedCalle || loading">
-      {{ loading ? 'Cargando...' : 'Consultar Datos' }}
-    </button>
   </div>
 
   <div class="main-content">
@@ -17,92 +14,56 @@
       <i class="pi pi-spinner pi-spin"></i> Cargando datos...
     </div>
 
-    <div *ngIf="!loading && selectedCalle">
-      <div *ngIf="vecinosFiltrados.length > 0; else noResults">
-        <h2>Resumen de Residentes en {{selectedCalle}}</h2>
-        
-        <div class="results-info">
-          <p>Total de residentes: <strong>{{vecinosFiltrados.length}}</strong></p>
-          <p>Hombres: <strong>{{estadisticas.cantidadHombres}}</strong></p>
-          <p>Mujeres: <strong>{{estadisticas.cantidadMujeres}}</strong></p>
-          <p>Porcentaje de hombres con alarmas activas: <strong>{{estadisticas.porcentajeHombres}}%</strong></p>
-        </div>
-
-        <div class="chart-section">
-          <h3>Distribución por Género</h3>
-          <div class="compact-chart-container">
-            <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"
-              [style]="{ height: '240px', width: '100%' }">
-            </p-chart>
+    <div *ngIf="!loading">
+      <h2>Registro de Residentes - {{selectedStreet}}</h2>
+      
+      <div class="stats-card">
+        <h3>Estadísticas de Residentes</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Total Residentes:</span>
+            <span class="stat-value">{{totalResidents}}</span>
           </div>
-        </div>
-
-        <div class="residentes-section">
-          <h3>Registro de Residentes ({{vecinosFiltrados.length}})</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>Dirección</th>
-                  <th>RUT</th>
-                  <th>Sexo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let vecino of vecinosFiltrados">
-                  <td>{{ vecino.id }}</td>
-                  <td>{{ vecino.nombre }}</td>
-                  <td>{{ vecino.apellido }}</td>
-                  <td>{{ vecino.direccion }} {{ vecino.numero_casa }}</td>
-                  <td>{{ vecino.rut }}</td>
-                  <td>{{ vecino.sexo }}</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="stat-item">
+            <span class="stat-label">Hombres:</span>
+            <span class="stat-value">{{maleCount}}</span>
           </div>
-        </div>
-
-        <div class="alarmas-section" *ngIf="alarmasFiltradas.length > 0">
-          <h3>Historial de Alarmas Recientes ({{alarmasFiltradas.length}})</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>Dirección</th>
-                  <th>Fecha</th>
-                  <th>Hora</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let alarma of alarmasFiltradas">
-                  <td>{{ alarma.id }}</td>
-                  <td>{{ alarma.nombre }}</td>
-                  <td>{{ alarma.apellido }}</td>
-                  <td>{{ alarma.direccion_usuario }}</td>
-                  <td>{{ alarma.fecha | date:'dd/MM/yyyy' }}</td>
-                  <td>{{ alarma.hora }}</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="stat-item">
+            <span class="stat-label">Mujeres:</span>
+            <span class="stat-value">{{femaleCount}}</span>
           </div>
         </div>
       </div>
 
-      <ng-template #noResults>
-        <div class="no-results">
-          No se encontraron residentes en {{selectedCalle}}
-        </div>
-      </ng-template>
-    </div>
+      <div class="chart-container">
+        <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"></p-chart>
+      </div>
 
-    <div *ngIf="!selectedCalle && !loading" class="no-data">
-      Selecciona una calle para ver la información
+      <div class="residents-list">
+        <h3>Listado de Residentes ({{filteredResidents.length}})</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Dirección</th>
+                <th>RUT</th>
+                <th>Género</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let resident of filteredResidents">
+                <td>{{ resident.nombre }}</td>
+                <td>{{ resident.apellido }}</td>
+                <td>{{ resident.calle }} {{ resident.numero_casa }}</td>
+                <td>{{ resident.rut  }}</td>
+                <td>{{ resident.sexo }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

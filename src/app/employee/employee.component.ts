@@ -2,34 +2,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ManagerService } from '../services/manager.service';
 import { FormsModule } from '@angular/forms';
-import { ChartModule } from 'primeng/chart';  
+import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
 
-interface Vecino {
+interface Resident {
   id: number;
   nombre: string;
   apellido: string;
-  fecha_nacimiento: string;
   direccion: string;
+  calle: string;
   numero_casa: string;
   rut: string;
-  sexo: string;
-  calle?: string;
-}
-
-interface Alarma {
-  id: number;
-  nombre: string;
-  apellido: string;
-  direccion_usuario: string;
-  fecha: string;
-  hora: string;
-}
-
-interface Estadisticas {
-  porcentajeHombres: number;
-  cantidadHombres: number;
-  cantidadMujeres: number;
+  sexo: 'Masculino' | 'Femenino';
 }
 
 @Component({
@@ -38,143 +22,102 @@ interface Estadisticas {
   styleUrls: ['./employee.component.css'],
   standalone: true,
   imports: [FormsModule, ChartModule, CommonModule]
+  
 })
 export class EmployeeComponent implements OnInit {
-  vecinos: Vecino[] = [];
-  vecinosFiltrados: Vecino[] = [];
-  selectedCalle: string | null = null;
-  calles: string[] = [];
-  alarmas: Alarma[] = [];
-  alarmasFiltradas: Alarma[] = [];
-  estadisticas: Estadisticas = {
-    porcentajeHombres: 0,
-    cantidadHombres: 0,
-    cantidadMujeres: 0
-  };
+  
+  calles: any[] = [];         // o usa una interfaz/tipo adecuado
+  vecinos: any[] = [];        // o usa una interfaz/tipo adecuado
+  selectedCalle: any = null;  // o usa un tipo específico
+  chartOptions: any;          // o usa el tipo correcto de primeng
+
+  // Resto del código del componente
+
+  residents: Resident[] = [];
+  filteredResidents: Resident[] = [];
+  streets: string[] = [
+    'Avenida Primavera',
+    'Calle 1',
+    'Calle 2',
+    'Calle 3',
+    'Calle 4',
+    'Calle 5',
+    'Calle 6',
+    'Calle 7',
+    'Calle 8',
+    'Calle 9'
+  ];
+  selectedStreet: string = this.streets[0];
   loading: boolean = false;
+  
+  // Estadísticas
+  totalResidents: number = 0;
+  maleCount: number = 0;
+  femaleCount: number = 0;
+  
+  // Datos para gráfico
   chartData: any;
   chartOptions: any;
 
-  constructor(private managerService: ManagerService) { }
+  constructor(private managerService: ManagerService) {}
 
   ngOnInit(): void {
     this.initChartOptions();
-    this.loadInitialData();
-  }
-
-  private loadInitialData(): void {
-    this.loading = true;
-    
-    // Cargar calles
-    this.managerService.getCalles().subscribe({
-      next: (calles) => {
-        this.calles = calles;
-        if (calles.length > 0) {
-          this.selectedCalle = calles[0];
-        }
-      },
-      error: (err) => console.error('Error fetching calles:', err)
-    });
-
-    // Cargar vecinos
-    this.managerService.getVecinos().subscribe({
-      next: (vecinos) => {
-        this.vecinos = vecinos;
-        this.filtrarDatosPorCalle();
-      },
-      error: (err) => console.error('Error fetching vecinos:', err)
-    });
-
-    // Cargar alarmas
-    this.managerService.getAlarmas().subscribe({
-      next: (alarmas) => {
-        this.alarmas = alarmas;
-        this.filtrarDatosPorCalle();
-      },
-      error: (err) => console.error('Error fetching alarmas:', err)
-    });
-
-    // Cargar estadísticas
-    this.managerService.getPorcentajeHombresAlarmas().subscribe({
-      next: (data) => {
-        this.estadisticas.porcentajeHombres = data[0]?.porcentaje_hombres || 0;
-      },
-      error: (err) => console.error('Error fetching porcentaje:', err)
-    });
-
-    this.managerService.getCantidadHombres().subscribe({
-      next: (data) => {
-        this.estadisticas.cantidadHombres = data[0]?.cantidad_hombres || 0;
-        this.updateChartData();
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching cantidad:', err);
-        this.loading = false;
-      }
-    });
-  }
-
-  private filtrarDatosPorCalle(): void {
-    if (!this.selectedCalle) return;
-
-    // Filtrar vecinos
-    this.vecinosFiltrados = this.vecinos.filter(v => 
-      v.direccion.includes(this.selectedCalle!) || 
-      v.calle === this.selectedCalle
-    );
-
-    // Filtrar alarmas
-    this.alarmasFiltradas = this.alarmas.filter(a => 
-      a.direccion_usuario.includes(this.selectedCalle!)
-    );
-
-    // Actualizar estadísticas si hay vecinos filtrados
-    if (this.vecinosFiltrados.length > 0) {
-      const totalHombres = this.vecinosFiltrados.filter(v => v.sexo === 'Masculino').length;
-      this.estadisticas.cantidadHombres = totalHombres;
-      this.estadisticas.cantidadMujeres = this.vecinosFiltrados.length - totalHombres;
-      this.updateChartData();
-    }
+    this.loadResidents();
   }
 
   initChartOptions(): void {
     this.chartOptions = {
       responsive: true,
-      maintainAspectRatio: false,
       plugins: {
-        legend: {
-          position: 'top',
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              const label = context.label || '';
-              const value = context.raw || 0;
-              return `${label}: ${value} (${((value / this.vecinosFiltrados.length) * 100).toFixed(1)}%)`;
-            }
-          }
-        }
+        legend: { position: 'top' },
+        title: { display: true, text: 'Distribución por Género' }
       }
     };
+  }
+
+  loadResidents(): void {
+    this.loading = true;
+    this.managerService.getVecinos().subscribe({
+      next: (data) => {
+        this.residents = data;
+        this.filterByStreet();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading residents:', err);
+        this.loading = false;
+      }
+    });
+  }
+
+  filterByStreet(): void {
+    this.filteredResidents = this.residents.filter(resident => 
+      resident.calle === this.selectedStreet
+    );
+    
+    this.calculateStatistics();
+    this.updateChartData();
+  }
+
+  calculateStatistics(): void {
+    this.totalResidents = this.filteredResidents.length;
+    this.maleCount = this.filteredResidents.filter(r => r.sexo === 'Masculino').length;
+    this.femaleCount = this.totalResidents - this.maleCount;
   }
 
   updateChartData(): void {
     this.chartData = {
       labels: ['Hombres', 'Mujeres'],
       datasets: [{
-        data: [this.estadisticas.cantidadHombres, this.estadisticas.cantidadMujeres],
-        backgroundColor: ['#4285F4', '#34A853'],
-        borderWidth: 0
+        data: [this.maleCount, this.femaleCount],
+        backgroundColor: ['#36A2EB', '#FF6384'],
+        hoverBackgroundColor: ['#36A2EB', '#FF6384']
       }]
     };
   }
 
-  onSearch(): void {
-    if (!this.selectedCalle) {
-      alert('Por favor selecciona una calle');
-      return;
-    }
-    this.filtrarDatosPorCalle();
+  onStreetChange(): void {
+    this.filterByStreet();
   }
 }
