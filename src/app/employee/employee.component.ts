@@ -29,7 +29,6 @@ export class EmployeeComponent implements OnInit {
   calles: any[] = [];         // o usa una interfaz/tipo adecuado
   vecinos: any[] = [];        // o usa una interfaz/tipo adecuado
   selectedCalle: any = null;  // o usa un tipo específico
-  chartOptions: any;          // o usa el tipo correcto de primeng
 
   // Resto del código del componente
 
