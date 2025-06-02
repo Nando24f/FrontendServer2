@@ -1,70 +1,52 @@
+/* employee.component.css */
 .container {
   display: flex;
   min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .sidebar {
-  width: 250px;
-  background-color: #f5f5f5;
+  width: 280px;
+  background-color: #2c3e50;
   padding: 20px;
-  border-right: 1px solid #ddd;
+  color: white;
 }
 
 .main-content {
   flex: 1;
   padding: 20px;
+  background-color: #f9f9f9;
 }
 
 .manager-select {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 15px;
+  padding: 10px;
+  margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  background-color: white;
+  color: #333;
 }
 
 .search-button {
   width: 100%;
-  padding: 10px;
-  background-color: #4285f4;
+  padding: 12px;
+  background-color: #3498db;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .search-button:hover {
-  background-color: #3367d6;
+  background-color: #2980b9;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-}
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-}
-
-tr:hover {
-  background-color: #f9f9f9;
-}
-
-.chart-container {
-  margin: 20px 0;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #f9f9f9;
+.search-button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
 }
 
 .loading {
@@ -72,24 +54,61 @@ tr:hover {
   text-align: center;
   font-style: italic;
   color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-.no-results, .no-data {
+.table-responsive {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #e3f2fd;
+}
+
+.chart-section {
+  background: white;
   padding: 20px;
-  text-align: center;
-  font-style: italic;
-  color: #666;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
 }
 
-.results-info {
-  margin-bottom: 20px;
-  padding: 15px;
-  background-color: #f8f9fa;
+.residentes-section, .alarmas-section {
+  background: white;
+  padding: 20px;
   border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
 }
 
 .compact-chart-container {
-  max-width: 400px; 
+  max-width: 400px;
   margin: 0 auto;
   padding: 10px;
 }
@@ -97,8 +116,8 @@ tr:hover {
 h2 {
   color: #2c3e50;
   margin-bottom: 20px;
-  border-bottom: 2px solid #eee;
   padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
 }
 
 h3 {
@@ -108,12 +127,23 @@ h3 {
 
 .results-info {
   background-color: #e8f4f8;
-  border-left: 4px solid #4285f4;
+  border-left: 4px solid #3498db;
   padding: 15px;
   margin-bottom: 20px;
+  border-radius: 5px;
 }
 
 .results-info p {
-  margin: 5px 0;
+  margin: 8px 0;
   font-size: 16px;
+}
+
+.no-results, .no-data {
+  padding: 30px;
+  text-align: center;
+  font-style: italic;
+  color: #666;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
