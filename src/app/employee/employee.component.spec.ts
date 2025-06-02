@@ -43,5 +43,4 @@ describe('EmployeeComponent', () => {
     expect(mockManagerService.getCalles).toHaveBeenCalled();
     expect(mockManagerService.getVecinos).toHaveBeenCalled();
   });
-
 });

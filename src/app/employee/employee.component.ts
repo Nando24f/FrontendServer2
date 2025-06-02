@@ -64,7 +64,18 @@ export class EmployeeComponent implements OnInit {
 
   // Datos por calle
   selectedCalle: string | null = null;
-  calles: string[] = [];
+  calles: string[] = [
+    'Avenida Primavera',
+    'Calle 1',
+    'Calle 2',
+    'Calle 3',
+    'Calle 4',
+    'Calle 5',
+    'Calle 6',
+    'Calle 7',
+    'Calle 8',
+    'Calle 9'
+  ];
   estadisticasCalle: EstadisticasCalle = {
     totalVecinos: 0,
     totalHombres: 0,
@@ -89,6 +100,7 @@ export class EmployeeComponent implements OnInit {
   ngOnInit(): void {
     this.initChartOptions();
     this.fetchAllData();
+    this.selectedCalle = this.calles[0]; // Selecciona la primera calle por defecto
   }
 
   initChartOptions(): void {
@@ -117,12 +129,13 @@ export class EmployeeComponent implements OnInit {
   fetchAllData(): void {
     this.loading = true;
 
-    // 1. Obtener calles
+    // 1. Obtener calles (complementar con las que ya tenemos)
     this.managerService.getCalles().subscribe({
       next: (calles) => {
-        this.calles = calles;
-        if (calles.length > 0) {
-          this.selectedCalle = calles[0];
+        if (calles && calles.length > 0) {
+          // Fusionar con las calles por defecto, evitando duplicados
+          const callesUnicas = [...new Set([...this.calles, ...calles])];
+          this.calles = callesUnicas;
         }
       },
       error: (err) => console.error('Error fetching calles:', err)
