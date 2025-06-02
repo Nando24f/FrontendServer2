@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="sidebar">
+    <h3>Calles</h3>
+    <select [(ngModel)]="selectedCalle" class="manager-select">
+      <option *ngFor="let calle of calles" [value]="calle">
+        {{ calle }}
+      </option>
+    </select>
+    <button (click)="onSearch()" class="search-button" [disabled]="!selectedCalle">
+      Buscar
+    </button>
+  </div>
+
+  <div class="main-content">
+    <div *ngIf="loading" class="loading">Cargando...</div>
+
+    <div *ngIf="vecinos.length > 0" class="results">
+      <h3>Vecinos en {{selectedCalle}}: {{vecinos.length}}</h3>
+      <h3>Porcentaje de hombres con alarmas: {{porcentajeHombres}}%</h3>
+
+      <div class="compact-chart-container">
+        <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"
+          [style]="{ height: '240px', width: '100%' }">
+        </p-chart>
+      </div>
+
+      <h3>Lista de Vecinos</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Dirección</th>
+            <th>RUT</th>
+            <th>Sexo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vecino of vecinos">
+            <td>{{ vecino.id }}</td>
+            <td>{{ vecino.nombre }}</td>
+            <td>{{ vecino.apellido }}</td>
+            <td>{{ vecino.direccion }} {{ vecino.numero_casa }}</td>
+            <td>{{ vecino.rut }}</td>
+            <td>{{ vecino.sexo }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Últimas Alarmas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Dirección</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let alarma of alarmas">
+            <td>{{ alarma.id }}</td>
+            <td>{{ alarma.nombre }}</td>
+            <td>{{ alarma.apellido }}</td>
+            <td>{{ alarma.direccion_usuario }}</td>
+            <td>{{ alarma.fecha | date }}</td>
+            <td>{{ alarma.hora }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="vecinos.length === 0 && !loading" class="no-results">
+      Selecciona una calle y haz clic en "Buscar" para ver los vecinos
+    </div>
+  </div>
+</div>
