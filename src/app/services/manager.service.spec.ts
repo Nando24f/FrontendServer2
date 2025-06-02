@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
-import { EmployeeComponent } from '../employee/employee.component';
+import { EmployeeComponent } from './employee.component';
 import { ChartModule } from 'primeng/chart';
 
 describe('EmployeeComponent', () => {
@@ -24,9 +24,9 @@ describe('EmployeeComponent', () => {
   });
 
   it('should initialize with empty data', () => {
-    expect(component.calles.length).toBeGreaterThan(0);
+    expect(component.calles.length).toBe(0);
     expect(component.vecinos.length).toBe(0);
-    expect(component.selectedCalle).toBeTruthy();
+    expect(component.selectedCalle).toBeNull();
   });
 
   it('should initialize chart options', () => {
