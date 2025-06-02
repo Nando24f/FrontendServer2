@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
-import { EmployeeComponent } from './employee.component';
+import { EmployeeComponent } from '../employee/employee.component';
 import { ChartModule } from 'primeng/chart';
 
 describe('EmployeeComponent', () => {

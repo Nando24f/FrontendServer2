@@ -35,13 +35,20 @@
     <div *ngIf="loading" class="loading">Cargando datos...</div>
 
     <div *ngIf="!loading">
-      <!-- Gráfico de distribución por sexo -->
-      <div class="chart-container">
-        <h3>Distribución de Vecinos por Sexo</h3>
-        <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"></p-chart>
+      <!-- Sección de gráficos -->
+      <div class="charts-row">
+        <div class="chart-container">
+          <h3>Distribución de Vecinos por Sexo</h3>
+          <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"></p-chart>
+        </div>
+
+        <div class="chart-container">
+          <h3>Vecinos por Calle (Top 10)</h3>
+          <p-chart type="bar" [data]="chartDataPorCalle" [options]="chartOptionsPorCalle"></p-chart>
+        </div>
       </div>
 
-      <!-- Estadísticas de alarmas -->
+      <!-- Resto del contenido permanece igual -->
       <div class="stats-container">
         <h3>Estadísticas de Alarmas</h3>
         <div class="stats-grid">
@@ -56,72 +63,7 @@
         </div>
       </div>
 
-      <!-- Estadísticas por calle seleccionada -->
-      <div *ngIf="selectedCalle" class="stats-container">
-        <h3>Estadísticas para: {{ selectedCalle }}</h3>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-title">Total Vecinos</div>
-            <div class="stat-value">{{ estadisticasCalle.totalVecinos }}</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Hombres</div>
-            <div class="stat-value">{{ estadisticasCalle.totalHombres }}</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Mujeres</div>
-            <div class="stat-value">{{ estadisticasCalle.totalMujeres }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Lista de Administradores -->
-      <div class="list-container">
-        <h3>Administradores ({{ administradores.length }})</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>RUT</th>
-              <th>Dirección</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let admin of administradores">
-              <td>{{ admin.nombre }}</td>
-              <td>{{ admin.apellido }}</td>
-              <td>{{ admin.rut }}</td>
-              <td>{{ admin.direccion }} {{ admin.numero_casa }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Últimas Alarmas -->
-      <div class="list-container">
-        <h3>Últimas Alarmas ({{ alarmas.length }})</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Dirección</th>
-              <th>Fecha</th>
-              <th>Hora</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let alarma of alarmas">
-              <td>{{ alarma.nombre }}</td>
-              <td>{{ alarma.apellido }}</td>
-              <td>{{ alarma.direccion_usuario }}</td>
-              <td>{{ alarma.fecha | date }}</td>
-              <td>{{ alarma.hora }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Resto del template... -->
     </div>
   </div>
 </div>

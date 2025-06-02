@@ -42,6 +42,11 @@ interface EstadisticasCalle {
   totalMujeres: number;
 }
 
+interface VecinosPorCalle {
+  calle: string;
+  cantidad: number;
+}
+
 @Component({
   selector: 'app-employee',
   templateUrl: './employee.component.html',
@@ -91,6 +96,8 @@ export class EmployeeComponent implements OnInit {
   loading: boolean = false;
   chartData: any = {};
   chartOptions: any;
+  chartDataPorCalle: any = {};
+  chartOptionsPorCalle: any;
 
   constructor(
     private http: HttpClient,
@@ -99,8 +106,9 @@ export class EmployeeComponent implements OnInit {
 
   ngOnInit(): void {
     this.initChartOptions();
+    this.initChartOptionsPorCalle();
     this.fetchAllData();
-    this.selectedCalle = this.calles[0]; // Selecciona la primera calle por defecto
+    this.selectedCalle = this.calles[0];
   }
 
   initChartOptions(): void {
@@ -126,6 +134,40 @@ export class EmployeeComponent implements OnInit {
     };
   }
 
+  initChartOptionsPorCalle(): void {
+    this.chartOptionsPorCalle = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              return `${context.label}: ${context.raw} vecinos`;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Cantidad de Vecinos'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Calles'
+          }
+        }
+      }
+    };
+  }
+
   fetchAllData(): void {
     this.loading = true;
 
@@ -133,7 +175,6 @@ export class EmployeeComponent implements OnInit {
     this.managerService.getCalles().subscribe({
       next: (calles) => {
         if (calles && calles.length > 0) {
-          // Fusionar con las calles por defecto, evitando duplicados
           const callesUnicas = [...new Set([...this.calles, ...calles])];
           this.calles = callesUnicas;
         }
@@ -201,6 +242,14 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching porcentaje mujeres:', err)
     });
 
+    // 9. Obtener distribución por calles
+    this.managerService.getVecinosPorCalle('all').subscribe({ // Or whatever parameter you need
+      next: (data: VecinosPorCalle[]) => {
+        this.updateChartDataPorCalle(data);
+      },
+      error: (err) => console.error('Error fetching vecinos por calle:', err)
+    });
+
     // Finalizar carga
     setTimeout(() => {
       this.loading = false;
@@ -218,6 +267,21 @@ export class EmployeeComponent implements OnInit {
     };
   }
 
+  updateChartDataPorCalle(data: VecinosPorCalle[]): void {
+    const sortedData = [...data].sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
+
+    this.chartDataPorCalle = {
+      labels: sortedData.map(item => item.calle),
+      datasets: [{
+        label: 'Vecinos por Calle',
+        data: sortedData.map(item => item.cantidad),
+        backgroundColor: '#3498db',
+        borderColor: '#2980b9',
+        borderWidth: 1
+      }]
+    };
+  }
+
   onSearch(): void {
     if (!this.selectedCalle) {
       alert('Por favor selecciona una calle');
@@ -225,7 +289,6 @@ export class EmployeeComponent implements OnInit {
     }
     this.loading = true;
 
-    // 9. Obtener vecinos por calle
     this.managerService.getVecinosPorCalle(this.selectedCalle).subscribe({
       next: (data) => {
         this.estadisticasCalle.totalVecinos = data[0]?.cantidad_vecinos || 0;
@@ -233,7 +296,6 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching vecinos por calle:', err)
     });
 
-    // 10. Obtener hombres por calle
     this.managerService.getHombresPorCalle(this.selectedCalle).subscribe({
       next: (data) => {
         this.estadisticasCalle.totalHombres = data[0]?.cantidad_hombres || 0;
@@ -241,7 +303,6 @@ export class EmployeeComponent implements OnInit {
       error: (err) => console.error('Error fetching hombres por calle:', err)
     });
 
-    // 11. Obtener mujeres por calle
     this.managerService.getMujeresPorCalle(this.selectedCalle).subscribe({
       next: (data) => {
         this.estadisticasCalle.totalMujeres = data[0]?.cantidad_mujeres || 0;

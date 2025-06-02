@@ -1,3 +1,4 @@
+// employee.component.spec.ts
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +13,11 @@ describe('EmployeeComponent', () => {
   let mockManagerService: jasmine.SpyObj<ManagerService>;
 
   beforeEach(async () => {
-    mockManagerService = jasmine.createSpyObj('ManagerService', ['getCalles', 'getVecinos']);
+    mockManagerService = jasmine.createSpyObj('ManagerService', [
+      'getCalles', 
+      'getVecinos',
+      'getVecinosPorCalle'  // Changed from getVecinosPorCalleTodas to getVecinosPorCalle
+    ]);
     
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, FormsModule, ChartModule],
@@ -31,6 +36,10 @@ describe('EmployeeComponent', () => {
       { id: 1, nombre: 'Juan', calle: 'Calle 1', sexo: 'Masculino' },
       { id: 2, nombre: 'Maria', calle: 'Calle 1', sexo: 'Femenino' }
     ]));
+    mockManagerService.getVecinosPorCalle.and.returnValue(of([  // Changed from getVecinosPorCalleTodas to getVecinosPorCalle
+      { calle: 'Avenida Primavera', cantidad: 45 },
+      { calle: 'Calle 1', cantidad: 32 }
+    ]));
 
     fixture.detectChanges();
   });
@@ -42,5 +51,6 @@ describe('EmployeeComponent', () => {
   it('should load streets and residents', () => {
     expect(mockManagerService.getCalles).toHaveBeenCalled();
     expect(mockManagerService.getVecinos).toHaveBeenCalled();
+    expect(mockManagerService.getVecinosPorCalle).toHaveBeenCalled();  // Changed from getVecinosPorCalleTodas to getVecinosPorCalle
   });
 });
