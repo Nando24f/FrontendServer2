@@ -1,71 +1,112 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { FormsModule } from '@angular/forms';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { EmployeeComponent } from './employee.component';
+import { AlarmasService } from '../services/Alarmas.service';
 import { ChartModule } from 'primeng/chart';
-import { of } from 'rxjs';
-import { ManagerService } from '../services/manager.service';
+import { CommonModule } from '@angular/common';
 
 describe('EmployeeComponent', () => {
   let component: EmployeeComponent;
   let fixture: ComponentFixture<EmployeeComponent>;
-  let mockManagerService: jasmine.SpyObj<ManagerService>;
+  let httpMock: HttpTestingController;
+  let alarmasService: AlarmasService;
 
   beforeEach(async () => {
-    mockManagerService = jasmine.createSpyObj('ManagerService', [
-      'getCalles', 
-      'getVecinos',
-      'getVecinosPorCalleTodas',
-      'getVecinosPorCalle',
-      'getHombresPorCalle',
-      'getMujeresPorCalle',
-      'getAdministradores',
-      'getAlarmas',
-      'getPorcentajeHombresAlarmas',
-      'getPorcentajeMujeresAlarmas',
-      'getCantidadHombres',
-      'getCantidadMujeres'
-    ]);
-    
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, FormsModule, ChartModule],
+      imports: [HttpClientTestingModule, ChartModule, CommonModule],
       declarations: [EmployeeComponent],
-      providers: [
-        { provide: ManagerService, useValue: mockManagerService }
-      ]
+      providers: [AlarmasService]
     }).compileComponents();
 
     fixture = TestBed.createComponent(EmployeeComponent);
     component = fixture.componentInstance;
-    
-    // Configurar respuestas mock
-    mockManagerService.getCalles.and.returnValue(of(['Calle 1', 'Calle 2']));
-    mockManagerService.getVecinos.and.returnValue(of([]));
-    mockManagerService.getVecinosPorCalleTodas.and.returnValue(of([
-      { calle: 'Avenida Primavera', cantidad: 45 },
-      { calle: 'Calle 1', cantidad: 32 }
-    ]));
-    mockManagerService.getVecinosPorCalle.and.returnValue(of([{ cantidad_vecinos: 10 }]));
-    mockManagerService.getHombresPorCalle.and.returnValue(of([{ cantidad_hombres: 5 }]));
-    mockManagerService.getMujeresPorCalle.and.returnValue(of([{ cantidad_mujeres: 5 }]));
+    httpMock = TestBed.inject(HttpTestingController);
+    alarmasService = TestBed.inject(AlarmasService);
+  });
 
-    fixture.detectChanges();
+  afterEach(() => {
+    httpMock.verify(); // Verifica que no hay peticiones pendientes
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load initial data', () => {
-    expect(mockManagerService.getCalles).toHaveBeenCalled();
-    expect(mockManagerService.getVecinosPorCalleTodas).toHaveBeenCalled();
+  it('should load active alarms data', () => {
+    // Datos mock que coinciden con tu estructura real del backend
+    const mockAlarmasActivas = [
+      {
+        id: 1,
+        nombre: 'Juan',
+        apellido: 'Pérez',
+        categoria: 'Incendio',
+        estado: 'pendiente',
+        fecha: '2023-05-01',
+        hora: '14:30:00'
+      }
+    ];
+
+    component.ngOnInit();
+    
+    // Simula la respuesta HTTP
+    const req = httpMock.expectOne('http://200.13.4.251:8080/api/alarmas/activas');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockAlarmasActivas);
+
+    expect(component.ultimasAlarmas.length).toBe(1);
+    expect(component.ultimasAlarmas[0].nombre).toBe('Juan');
   });
 
-  it('should search by street', () => {
-    component.selectedCalle = 'Calle 1';
-    component.onSearch();
-    expect(mockManagerService.getVecinosPorCalle).toHaveBeenCalledWith('Calle 1');
-    expect(mockManagerService.getHombresPorCalle).toHaveBeenCalledWith('Calle 1');
-    expect(mockManagerService.getMujeresPorCalle).toHaveBeenCalledWith('Calle 1');
+  it('should handle empty alarm states', () => {
+    const mockEstados: any[] = [];
+
+    component.ngOnInit();
+    
+    const req = httpMock.expectOne('http://200.13.4.251:8080/api/alarmas/estados');
+    req.flush(mockEstados);
+
+    expect(component.estadisticas.porEstado).toEqual([]);
+    expect(component.chartData).toBeUndefined();
+  });
+
+  it('should format chart data correctly', () => {
+    const mockEstados = [
+      { estado: 'pendiente', total: 5 },
+      { estado: 'resuelta', total: 3 }
+    ];
+
+    component.ngOnInit();
+    
+    const req = httpMock.expectOne('http://200.13.4.251:8080/api/alarmas/estados');
+    req.flush(mockEstados);
+
+    expect(component.chartData.labels).toEqual(['pendiente', 'resuelta']);
+    expect(component.chartData.datasets[0].data).toEqual([5, 3]);
+  });
+
+  it('should handle HTTP errors', () => {
+    spyOn(console, 'error');
+    
+    component.ngOnInit();
+    
+    const req = httpMock.expectOne('http://200.13.4.251:8080/api/alarmas/activas');
+    req.error(new ErrorEvent('Network error'));
+    
+    expect(console.error).toHaveBeenCalled();
+    expect(component.ultimasAlarmas).toEqual([]);
+  });
+
+  it('should count critical alarms', () => {
+    const mockCriticas = [
+      { id: 1, prioridad: 'critica', estado: 'pendiente' },
+      { id: 2, prioridad: 'critica', estado: 'en_proceso' }
+    ];
+
+    component.ngOnInit();
+    
+    const req = httpMock.expectOne('http://200.13.4.251:8080/api/alarmas/criticas');
+    req.flush(mockCriticas);
+
+    expect(component.estadisticas.criticas).toBe(2);
   });
 });

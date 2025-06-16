@@ -5,12 +5,12 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ManagerService {
-  private apiUrl = 'http://200.13.4.251:4200/api'; // Ajusta la URL según tu configuración
+export class AlarmasService {
+  private apiUrl = 'http://200.13.4.251:8080/api'; // Asegúrate que el puerto sea correcto
 
   constructor(private http: HttpClient) {}
 
-  // Alarmas
+  // Métodos EXACTAMENTE como están en tu TestingController.java
   getUltimasAlarmasActivas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/activas`);
   }
@@ -50,6 +50,4 @@ export class ManagerService {
   getResueltasUltimos7Dias(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/resueltas`);
   }
-
-
 }

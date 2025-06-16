@@ -1,80 +1,35 @@
-<div class="container">
-  <div class="sidebar">
-    <h3>Estadísticas</h3>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-title">Total Alarmas</div>
-        <div class="stat-value">{{ estadisticas.totalAlarmas }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-title">Activas</div>
-        <div class="stat-value">{{ estadisticas.alarmasActivas }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-title">Resueltas</div>
-        <div class="stat-value">{{ estadisticas.alarmasResueltas }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-title">Críticas</div>
-        <div class="stat-value">{{ estadisticas.alarmasCriticas }}</div>
-      </div>
+<div class="dashboard-container">
+  <!-- Sección de alarmas activas -->
+  <div class="card">
+    <h3>Últimas Alarmas Activas</h3>
+    <div *ngIf="ultimasAlarmas.length > 0; else noAlarmas">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Categoría</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let alarma of ultimasAlarmas">
+            <td>{{ alarma.id }}</td>
+            <td>{{ alarma.nombre }} {{ alarma.apellido }}</td>
+            <td>{{ alarma.categoria }}</td>
+            <td>{{ alarma.estado }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <div class="chart-container">
-      <h3>Distribución por Estado</h3>
-      <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"></p-chart>
-    </div>
+    <ng-template #noAlarmas>
+      <p>No hay alarmas activas recientes</p>
+    </ng-template>
   </div>
 
-  <div class="main-content">
-    <div *ngIf="loading" class="loading">Cargando datos...</div>
-
-    <div *ngIf="!loading">
-      <div class="list-container">
-        <h3>Últimas Alarmas Activas</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Usuario</th>
-              <th>Categoría</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let alarma of ultimasAlarmas">
-              <td>{{ alarma.id }}</td>
-              <td>{{ alarma.nombre }} {{ alarma.apellido }}</td>
-              <td>{{ alarma.categoria }}</td>
-              <td>{{ alarma.estado }}</td>
-              <td>{{ alarma.fecha | date:'shortDate' }} {{ alarma.hora }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="list-container" *ngIf="alarmasMapa.length > 0">
-        <h3>Alarmas con Ubicación</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Categoría</th>
-              <th>Prioridad</th>
-              <th>Coordenadas</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let alarma of alarmasMapa">
-              <td>{{ alarma.id }}</td>
-              <td>{{ alarma.categoria }}</td>
-              <td>{{ alarma.prioridad }}</td>
-              <td>{{ alarma.latitud }}, {{ alarma.longitud }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <!-- Gráfico de estados -->
+  <div class="card">
+    <h3>Distribución por Estado</h3>
+    <p-chart type="pie" [data]="chartData" [options]="chartOptions"></p-chart>
   </div>
 </div>

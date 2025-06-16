@@ -1,27 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ManagerService } from '../services/manager.service';
+import { AlarmasService } from '../services/Alarmas.service';
 import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
-
-interface Alarma {
-  id: number;
-  nombre: string;
-  apellido: string;
-  categoria: string;
-  prioridad: string;
-  estado: string;
-  fecha: string;
-  hora: string;
-  latitud?: number;
-  longitud?: number;
-}
-
-interface Estadisticas {
-  totalAlarmas: number;
-  alarmasActivas: number;
-  alarmasResueltas: number;
-  alarmasCriticas: number;
-}
 
 @Component({
   selector: 'app-employee',
@@ -31,99 +11,65 @@ interface Estadisticas {
   imports: [ChartModule, CommonModule]
 })
 export class EmployeeComponent implements OnInit {
-  ultimasAlarmas: Alarma[] = [];
-  alarmasMapa: Alarma[] = [];
-  estadisticas: Estadisticas = {
-    totalAlarmas: 0,
-    alarmasActivas: 0,
-    alarmasResueltas: 0,
-    alarmasCriticas: 0
-  };
-  loading = true;
-
-  // Datos para gráficos
+  // Datos alineados con lo que realmente devuelve tu backend
+  ultimasAlarmas: any[] = [];
+  alarmasMapa: any[] = [];
+  estadisticas: any = {};
+  
+  // Gráficos
   chartData: any;
   chartOptions: any;
 
-  constructor(private ManagerService: ManagerService) {}
+  constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.initChartOptions();
-    this.loadData();
+    this.cargarDatos();
   }
 
-  initChartOptions(): void {
-    this.chartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'top',
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              return `${context.label}: ${context.raw}`;
-            }
-          }
-        }
-      }
-    };
-  }
-
-  loadData(): void {
-    // Cargar últimas alarmas activas
-    this.ManagerService.getUltimasAlarmasActivas().subscribe({
-      next: (data) => {
-        this.ultimasAlarmas = data;
-        this.estadisticas.alarmasActivas = data.length;
-      },
+  cargarDatos(): void {
+    // 1. Cargar últimas alarmas activas (QUERY_1)
+    this.alarmasService.getUltimasAlarmasActivas().subscribe({
+      next: (data) => this.ultimasAlarmas = data,
       error: (err) => console.error('Error al cargar alarmas activas:', err)
     });
 
-    // Cargar alarmas para mapa
-    this.ManagerService.getAlarmasConUbicacion().subscribe({
-      next: (data) => {
-        this.alarmasMapa = data;
-      },
-      error: (err) => console.error('Error al cargar alarmas para mapa:', err)
+    // 2. Cargar alarmas para mapa (QUERY_2)
+    this.alarmasService.getAlarmasConUbicacion().subscribe({
+      next: (data) => this.alarmasMapa = data,
+      error: (err) => console.error('Error al cargar alarmas con ubicación:', err)
     });
 
-    // Cargar estadísticas generales
-    this.ManagerService.getConteoPorEstado().subscribe({
+    // 3. Cargar estadísticas por estado (QUERY_6)
+    this.alarmasService.getConteoPorEstado().subscribe({
       next: (data) => {
-        this.estadisticas.totalAlarmas = data.reduce((acc, item) => acc + item.total, 0);
-        this.estadisticas.alarmasResueltas = data.find((e: any) => e.estado === 'resuelta')?.total || 0;
-        this.updateChartData(data);
+        this.estadisticas.porEstado = data;
+        this.configurarGraficoEstados(data);
       },
       error: (err) => console.error('Error al cargar estadísticas por estado:', err)
     });
 
-    // Cargar alarmas críticas
-    this.ManagerService.getCriticasNoResueltas().subscribe({
-      next: (data) => {
-        this.estadisticas.alarmasCriticas = data.length;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error al cargar alarmas críticas:', err);
-        this.loading = false;
-      }
+    // 4. Cargar alarmas críticas (QUERY_9)
+    this.alarmasService.getCriticasNoResueltas().subscribe({
+      next: (data) => this.estadisticas.criticas = data.length,
+      error: (err) => console.error('Error al cargar alarmas críticas:', err)
     });
   }
 
-  updateChartData(estadosData: any[]): void {
+  configurarGraficoEstados(datos: any[]): void {
     this.chartData = {
-      labels: estadosData.map((item: any) => item.estado),
+      labels: datos.map(item => item.estado),
       datasets: [{
-        data: estadosData.map((item: any) => item.total),
-        backgroundColor: [
-          '#FF6384', // Pendiente
-          '#36A2EB', // En proceso
-          '#4BC0C0'  // Resuelta
-        ],
-        borderWidth: 0
+        data: datos.map(item => item.total),
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
       }]
+    };
+
+    this.chartOptions = {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { callbacks: { label: (ctx: any) => `${ctx.label}: ${ctx.raw}` } }
+      }
     };
   }
 }
