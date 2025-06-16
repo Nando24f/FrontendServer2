@@ -1,33 +1,28 @@
 <div class="container">
   <div class="sidebar">
-    <h3>Calles</h3>
-    <select [(ngModel)]="selectedCalle" class="manager-select">
-      <option *ngFor="let calle of calles" [value]="calle">
-        {{ calle }}
-      </option>
-    </select>
-    <button (click)="onSearch()" class="search-button" [disabled]="!selectedCalle || loading">
-      Buscar
-    </button>
+    <h3>Estadísticas</h3>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-title">Total Alarmas</div>
+        <div class="stat-value">{{ estadisticas.totalAlarmas }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Activas</div>
+        <div class="stat-value">{{ estadisticas.alarmasActivas }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Resueltas</div>
+        <div class="stat-value">{{ estadisticas.alarmasResueltas }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Críticas</div>
+        <div class="stat-value">{{ estadisticas.alarmasCriticas }}</div>
+      </div>
+    </div>
 
-    <div class="stats-section">
-      <h3>Estadísticas Generales</h3>
-      <div class="stat-item">
-        <span class="stat-label">Vecinos Registrados:</span>
-        <span class="stat-value">{{ estadisticas.totalVecinos }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Hombres:</span>
-        <span class="stat-value">{{ estadisticas.totalHombres }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Mujeres:</span>
-        <span class="stat-value">{{ estadisticas.totalMujeres }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Total Alarmas:</span>
-        <span class="stat-value">{{ estadisticas.totalAlarmas }}</span>
-      </div>
+    <div class="chart-container">
+      <h3>Distribución por Estado</h3>
+      <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"></p-chart>
     </div>
   </div>
 
@@ -35,51 +30,50 @@
     <div *ngIf="loading" class="loading">Cargando datos...</div>
 
     <div *ngIf="!loading">
-      <!-- Sección de gráficos -->
-      <div class="charts-row">
-        <div class="chart-container">
-          <h3>Distribución de Vecinos por Sexo</h3>
-          <p-chart type="doughnut" [data]="chartData" [options]="chartOptions"></p-chart>
-        </div>
-
-        <div class="chart-container">
-          <h3>Vecinos por Calle (Top 10)</h3>
-          <p-chart type="bar" [data]="chartDataPorCalle" [options]="chartOptionsPorCalle"></p-chart>
-        </div>
+      <div class="list-container">
+        <h3>Últimas Alarmas Activas</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Categoría</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let alarma of ultimasAlarmas">
+              <td>{{ alarma.id }}</td>
+              <td>{{ alarma.nombre }} {{ alarma.apellido }}</td>
+              <td>{{ alarma.categoria }}</td>
+              <td>{{ alarma.estado }}</td>
+              <td>{{ alarma.fecha | date:'shortDate' }} {{ alarma.hora }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <!-- Estadísticas de calle seleccionada -->
-      <div class="stats-container" *ngIf="estadisticasCalle.totalVecinos > 0">
-        <h3>Estadísticas para {{ selectedCalle }}</h3>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-title">Total Vecinos</div>
-            <div class="stat-value">{{ estadisticasCalle.totalVecinos }}</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Hombres</div>
-            <div class="stat-value">{{ estadisticasCalle.totalHombres }}</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Mujeres</div>
-            <div class="stat-value">{{ estadisticasCalle.totalMujeres }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Estadísticas de Alarmas -->
-      <div class="stats-container">
-        <h3>Estadísticas de Alarmas</h3>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-title">Hombres con Alarmas</div>
-            <div class="stat-value">{{ estadisticas.porcentajeHombres }}%</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-title">Mujeres con Alarmas</div>
-            <div class="stat-value">{{ estadisticas.porcentajeMujeres }}%</div>
-          </div>
-        </div>
+      <div class="list-container" *ngIf="alarmasMapa.length > 0">
+        <h3>Alarmas con Ubicación</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Categoría</th>
+              <th>Prioridad</th>
+              <th>Coordenadas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let alarma of alarmasMapa">
+              <td>{{ alarma.id }}</td>
+              <td>{{ alarma.categoria }}</td>
+              <td>{{ alarma.prioridad }}</td>
+              <td>{{ alarma.latitud }}, {{ alarma.longitud }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

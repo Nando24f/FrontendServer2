@@ -1,50 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { ManagerService } from '../services/manager.service';
 import { ChartModule } from 'primeng/chart';
 import { CommonModule } from '@angular/common';
-import { ManagerService } from '../services/manager.service';
-
-interface Vecino {
-  id: number;
-  nombre: string;
-  apellido: string;
-  fecha_nacimiento: string;
-  direccion: string;
-  numero_casa: string;
-  rut: string;
-  sexo: string;
-}
 
 interface Alarma {
   id: number;
   nombre: string;
   apellido: string;
-  direccion_usuario: string;
+  categoria: string;
+  prioridad: string;
+  estado: string;
   fecha: string;
   hora: string;
+  latitud?: number;
+  longitud?: number;
 }
 
 interface Estadisticas {
-  totalVecinos: number;
-  totalHombres: number;
-  totalMujeres: number;
   totalAlarmas: number;
-  hombresAlarmas: number;
-  mujeresAlarmas: number;
-  porcentajeHombres: number;
-  porcentajeMujeres: number;
-}
-
-interface EstadisticasCalle {
-  totalVecinos: number;
-  totalHombres: number;
-  totalMujeres: number;
-}
-
-interface VecinosPorCalle {
-  calle: string;
-  cantidad: number;
+  alarmasActivas: number;
+  alarmasResueltas: number;
+  alarmasCriticas: number;
 }
 
 @Component({
@@ -52,60 +28,28 @@ interface VecinosPorCalle {
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.css'],
   standalone: true,
-  imports: [FormsModule, ChartModule, CommonModule]
+  imports: [ChartModule, CommonModule]
 })
 export class EmployeeComponent implements OnInit {
+  ultimasAlarmas: Alarma[] = [];
+  alarmasMapa: Alarma[] = [];
   estadisticas: Estadisticas = {
-    totalVecinos: 0,
-    totalHombres: 0,
-    totalMujeres: 0,
     totalAlarmas: 0,
-    hombresAlarmas: 0,
-    mujeresAlarmas: 0,
-    porcentajeHombres: 0,
-    porcentajeMujeres: 0
+    alarmasActivas: 0,
+    alarmasResueltas: 0,
+    alarmasCriticas: 0
   };
+  loading = true;
 
-  selectedCalle: string | null = null;
-  calles: string[] = [
-    'Avenida Primavera',
-    'Calle 1',
-    'Calle 2',
-    'Calle 3',
-    'Calle 4',
-    'Calle 5',
-    'Calle 6',
-    'Calle 7',
-    'Calle 8',
-    'Calle 9'
-  ];
-  
-  estadisticasCalle: EstadisticasCalle = {
-    totalVecinos: 0,
-    totalHombres: 0,
-    totalMujeres: 0
-  };
-
-  vecinos: Vecino[] = [];
-  administradores: Vecino[] = [];
-  alarmas: Alarma[] = [];
-
-  loading: boolean = false;
-  chartData: any = {};
+  // Datos para gráficos
+  chartData: any;
   chartOptions: any;
-  chartDataPorCalle: any = {};
-  chartOptionsPorCalle: any;
 
-  constructor(
-    private http: HttpClient,
-    private managerService: ManagerService
-  ) { }
+  constructor(private ManagerService: ManagerService) {}
 
   ngOnInit(): void {
     this.initChartOptions();
-    this.initChartOptionsPorCalle();
-    this.fetchAllData();
-    this.selectedCalle = this.calles[0];
+    this.loadData();
   }
 
   initChartOptions(): void {
@@ -119,11 +63,7 @@ export class EmployeeComponent implements OnInit {
         tooltip: {
           callbacks: {
             label: (context: any) => {
-              const label = context.label || '';
-              const value = context.raw || 0;
-              const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
-              const percentage = Math.round((value / total) * 100);
-              return `${label}: ${value} (${percentage}%)`;
+              return `${context.label}: ${context.raw}`;
             }
           }
         }
@@ -131,184 +71,59 @@ export class EmployeeComponent implements OnInit {
     };
   }
 
-  initChartOptionsPorCalle(): void {
-    this.chartOptionsPorCalle = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              return `${context.label}: ${context.raw} vecinos`;
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Cantidad de Vecinos'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Calles'
-          }
-        }
-      }
-    };
-  }
-
-  fetchAllData(): void {
-    this.loading = true;
-
-    // Obtener calles
-    this.managerService.getCalles().subscribe({
-      next: (calles) => {
-        if (calles && calles.length > 0) {
-          const callesUnicas = [...new Set([...this.calles, ...calles])];
-          this.calles = callesUnicas;
-        }
-      },
-      error: (err) => console.error('Error fetching calles:', err)
-    });
-
-    // Obtener vecinos
-    this.managerService.getVecinos().subscribe({
-      next: (vecinos) => {
-        this.vecinos = vecinos;
-        this.estadisticas.totalVecinos = vecinos.length;
-      },
-      error: (err) => console.error('Error fetching vecinos:', err)
-    });
-
-    // Obtener administradores
-    this.managerService.getAdministradores().subscribe({
-      next: (administradores) => {
-        this.administradores = administradores;
-      },
-      error: (err) => console.error('Error fetching administradores:', err)
-    });
-
-    // Obtener alarmas
-    this.managerService.getAlarmas().subscribe({
-      next: (alarmas) => {
-        this.alarmas = alarmas;
-        this.estadisticas.totalAlarmas = alarmas.length;
-      },
-      error: (err) => console.error('Error fetching alarmas:', err)
-    });
-
-    // Obtener cantidad de hombres
-    this.managerService.getCantidadHombres().subscribe({
+  loadData(): void {
+    // Cargar últimas alarmas activas
+    this.ManagerService.getUltimasAlarmasActivas().subscribe({
       next: (data) => {
-        this.estadisticas.totalHombres = data[0]?.cantidad_hombres || 0;
-        this.updateChartData();
+        this.ultimasAlarmas = data;
+        this.estadisticas.alarmasActivas = data.length;
       },
-      error: (err) => console.error('Error fetching cantidad hombres:', err)
+      error: (err) => console.error('Error al cargar alarmas activas:', err)
     });
 
-    // Obtener cantidad de mujeres
-    this.managerService.getCantidadMujeres().subscribe({
+    // Cargar alarmas para mapa
+    this.ManagerService.getAlarmasConUbicacion().subscribe({
       next: (data) => {
-        this.estadisticas.totalMujeres = data[0]?.cantidad_mujeres || 0;
-        this.updateChartData();
+        this.alarmasMapa = data;
       },
-      error: (err) => console.error('Error fetching cantidad mujeres:', err)
+      error: (err) => console.error('Error al cargar alarmas para mapa:', err)
     });
 
-    // Obtener porcentaje hombres con alarmas
-    this.managerService.getPorcentajeHombresAlarmas().subscribe({
+    // Cargar estadísticas generales
+    this.ManagerService.getConteoPorEstado().subscribe({
       next: (data) => {
-        this.estadisticas.porcentajeHombres = data[0]?.porcentaje_hombres || 0;
+        this.estadisticas.totalAlarmas = data.reduce((acc, item) => acc + item.total, 0);
+        this.estadisticas.alarmasResueltas = data.find((e: any) => e.estado === 'resuelta')?.total || 0;
+        this.updateChartData(data);
       },
-      error: (err) => console.error('Error fetching porcentaje hombres:', err)
+      error: (err) => console.error('Error al cargar estadísticas por estado:', err)
     });
 
-    // Obtener porcentaje mujeres con alarmas
-    this.managerService.getPorcentajeMujeresAlarmas().subscribe({
+    // Cargar alarmas críticas
+    this.ManagerService.getCriticasNoResueltas().subscribe({
       next: (data) => {
-        this.estadisticas.porcentajeMujeres = data[0]?.porcentaje_mujeres || 0;
-      },
-      error: (err) => console.error('Error fetching porcentaje mujeres:', err)
-    });
-
-    // Obtener distribución por calles para el gráfico
-    this.managerService.getVecinosPorCalleTodas().subscribe({
-      next: (data: VecinosPorCalle[]) => {
-        this.updateChartDataPorCalle(data);
-      },
-      error: (err) => console.error('Error fetching vecinos por calle:', err)
-    });
-
-    // Finalizar carga
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
-  }
-
-  updateChartData(): void {
-    this.chartData = {
-      labels: ['Hombres', 'Mujeres'],
-      datasets: [{
-        data: [this.estadisticas.totalHombres, this.estadisticas.totalMujeres],
-        backgroundColor: ['#4285F4', '#34A853'],
-        borderWidth: 0
-      }]
-    };
-  }
-
-  updateChartDataPorCalle(data: VecinosPorCalle[]): void {
-    const sortedData = [...data].sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
-    
-    this.chartDataPorCalle = {
-      labels: sortedData.map(item => item.calle),
-      datasets: [{
-        label: 'Vecinos por Calle',
-        data: sortedData.map(item => item.cantidad),
-        backgroundColor: '#3498db',
-        borderColor: '#2980b9',
-        borderWidth: 1
-      }]
-    };
-  }
-
-  onSearch(): void {
-    if (!this.selectedCalle) {
-      alert('Por favor selecciona una calle');
-      return;
-    }
-    this.loading = true;
-
-    this.managerService.getVecinosPorCalle(this.selectedCalle).subscribe({
-      next: (data) => {
-        this.estadisticasCalle.totalVecinos = data[0]?.cantidad_vecinos || 0;
-      },
-      error: (err) => console.error('Error fetching vecinos por calle:', err)
-    });
-
-    this.managerService.getHombresPorCalle(this.selectedCalle).subscribe({
-      next: (data) => {
-        this.estadisticasCalle.totalHombres = data[0]?.cantidad_hombres || 0;
-      },
-      error: (err) => console.error('Error fetching hombres por calle:', err)
-    });
-
-    this.managerService.getMujeresPorCalle(this.selectedCalle).subscribe({
-      next: (data) => {
-        this.estadisticasCalle.totalMujeres = data[0]?.cantidad_mujeres || 0;
+        this.estadisticas.alarmasCriticas = data.length;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error fetching mujeres por calle:', err);
+        console.error('Error al cargar alarmas críticas:', err);
         this.loading = false;
       }
     });
+  }
+
+  updateChartData(estadosData: any[]): void {
+    this.chartData = {
+      labels: estadosData.map((item: any) => item.estado),
+      datasets: [{
+        data: estadosData.map((item: any) => item.total),
+        backgroundColor: [
+          '#FF6384', // Pendiente
+          '#36A2EB', // En proceso
+          '#4BC0C0'  // Resuelta
+        ],
+        borderWidth: 0
+      }]
+    };
   }
 }

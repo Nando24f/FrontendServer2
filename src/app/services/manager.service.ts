@@ -2,67 +2,54 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-interface VecinosPorCalle {
-  calle: string;
-  cantidad: number;
-}
-
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ManagerService {
-  private apiUrl = 'http://200.13.4.251:4200/api';
+  private apiUrl = 'http://200.13.4.251:4200/api'; // Ajusta la URL según tu configuración
 
   constructor(private http: HttpClient) {}
 
-  // Métodos existentes
-  getVecinos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/vecinos`);
+  // Alarmas
+  getUltimasAlarmasActivas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/activas`);
   }
 
-  getAdministradores(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/administradores`);
+  getAlarmasConUbicacion(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/mapa`);
   }
 
-  getAlarmas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/alarmas`);
+  getAlarmasPorUsuario(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/usuario/${id}`);
   }
 
-  getPorcentajeHombresAlarmas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/alarmas/hombres/porcentaje`);
+  getAlarmasPorRango(desde: string, hasta: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/rango?desde=${desde}&hasta=${hasta}`);
   }
 
-  getPorcentajeMujeresAlarmas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/alarmas/mujeres/porcentaje`);
+  getConteoPorCategoria(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/categorias`);
   }
 
-  getCantidadHombres(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/hombres/cantidad`);
+  getConteoPorEstado(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/estados`);
   }
 
-  getCantidadMujeres(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/mujeres/cantidad`);
+  getTotalAlarmasPorUsuario(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/por_usuario`);
   }
 
-  getCalles(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/calles`);
+  getAlarmaPorId(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/${id}`);
   }
 
-  // Métodos para manejar calles
-  getVecinosPorCalle(calle: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/vecinos/calle?calle=${calle}`);
+  getCriticasNoResueltas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/criticas`);
   }
 
-  getHombresPorCalle(calle: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/hombres/calle?calle=${calle}`);
+  getResueltasUltimos7Dias(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/resueltas`);
   }
 
-  getMujeresPorCalle(calle: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuarios/mujeres/calle?calle=${calle}`);
-  }
 
-  // Nuevo método para gráfico de todas las calles
-  getVecinosPorCalleTodas(): Observable<VecinosPorCalle[]> {
-    return this.http.get<VecinosPorCalle[]>(`${this.apiUrl}/vecinos/por-calle-todas`);
-  }
 }
