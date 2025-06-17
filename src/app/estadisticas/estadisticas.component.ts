@@ -43,4 +43,19 @@ tamanio = 5;
     const inicio = (pagina - 1) * this.tamanio;
     return arr.slice(inicio, inicio + this.tamanio);
   }
+  consultarPorUsuario() {
+  this.alarmasService.getAlarmasPorUsuario(this.usuarioId).subscribe(data => this.alarmasPorUsuario = data);
+}
+
+consultarPorRango() {
+  this.alarmasService.getAlarmasPorRango(this.fechaInicio, this.fechaFin).subscribe(data => this.alarmasPorRango = data);
+}
+
+consultarCriticas() {
+  this.alarmasService.getCriticasNoResueltas().subscribe(data => this.alarmasCriticas = data);
+}
+
+consultarResueltas() {
+  this.alarmasService.getResueltasUltimos7Dias().subscribe(data => this.alarmasResueltas = data);
+}
 }
