@@ -11,33 +11,38 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./consultas.component.css']
 })
 export class ConsultasComponent {
-  idUsuario: number = 0;
-  resultados: any[] = [];
-  mensajeError = '';
+  usuarioId: number = 0;
+  fechaInicio: string = '';
+  fechaFin: string = '';
+
+  alarmasPorUsuario: any[] = [];
+  alarmasPorRango: any[] = [];
+  criticas: any[] = [];
+  resueltas: any[] = [];
 
   constructor(private alarmasService: AlarmasService) {}
 
-  buscarPorUsuario() {
-    this.resultados = [];
-    this.mensajeError = '';
+  consultarPorUsuario() {
+    this.alarmasService.getAlarmasPorUsuario(this.usuarioId).subscribe(data => {
+      this.alarmasPorUsuario = data;
+    });
+  }
 
-    if (!this.idUsuario || this.idUsuario <= 0) {
-      this.mensajeError = 'Por favor, ingrese un ID válido.';
-      return;
-    }
+  consultarPorRango() {
+    this.alarmasService.getAlarmasPorRango(this.fechaInicio, this.fechaFin).subscribe(data => {
+      this.alarmasPorRango = data;
+    });
+  }
 
-    this.alarmasService.getAlarmasPorUsuario(this.idUsuario).subscribe({
-      next: (data) => {
-        if (data.length === 0) {
-          this.mensajeError = 'No se encontraron alarmas para este usuario.';
-        } else {
-          this.resultados = data;
-        }
-      },
-      error: (err) => {
-        console.error('Error en la consulta:', err);
-        this.mensajeError = 'Hubo un error al realizar la consulta.';
-      }
+  consultarCriticas() {
+    this.alarmasService.getCriticasNoResueltas().subscribe(data => {
+      this.criticas = data;
+    });
+  }
+
+  consultarResueltas() {
+    this.alarmasService.getResueltasUltimos7Dias().subscribe(data => {
+      this.resueltas = data;
     });
   }
 }

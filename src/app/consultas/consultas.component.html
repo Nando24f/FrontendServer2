@@ -1,28 +1,43 @@
-<h2>Consulta de Alarmas por Usuario</h2>
 
-<div>
-  <label>ID de Usuario:</label>
-  <input type="number" [(ngModel)]="idUsuario" placeholder="Ej: 1" />
-  <button (click)="buscarPorUsuario()">Buscar</button>
+<div class="consultas-container">
+  <h2>Consultas Avanzadas</h2>
+
+  <!-- Alarmas por Usuario -->
+  <section>
+    <h3>Alarmas por Usuario</h3>
+    <input type="number" [(ngModel)]="usuarioId" placeholder="ID de Usuario">
+    <button (click)="consultarPorUsuario()">Consultar</button>
+    <ul>
+      <li *ngFor="let alarma of alarmasPorUsuario">{{ alarma | json }}</li>
+    </ul>
+  </section>
+
+  <!-- Alarmas por Rango de Fechas -->
+  <section>
+    <h3>Alarmas por Rango de Fechas</h3>
+    <input type="date" [(ngModel)]="fechaInicio">
+    <input type="date" [(ngModel)]="fechaFin">
+    <button (click)="consultarPorRango()">Consultar</button>
+    <ul>
+      <li *ngFor="let alarma of alarmasPorRango">{{ alarma | json }}</li>
+    </ul>
+  </section>
+
+  <!-- Alarmas Críticas No Resueltas -->
+  <section>
+    <h3>Alarmas Críticas No Resueltas</h3>
+    <button (click)="consultarCriticas()">Consultar</button>
+    <ul>
+      <li *ngFor="let alarma of criticas">{{ alarma | json }}</li>
+    </ul>
+  </section>
+
+  <!-- Alarmas Resueltas Últimos 7 Días -->
+  <section>
+    <h3>Alarmas Resueltas Últimos 7 Días</h3>
+    <button (click)="consultarResueltas()">Consultar</button>
+    <ul>
+      <li *ngFor="let alarma of resueltas">{{ alarma | json }}</li>
+    </ul>
+  </section>
 </div>
-
-<p *ngIf="mensajeError" style="color:red">{{ mensajeError }}</p>
-
-<table *ngIf="resultados.length > 0">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Categoría</th>
-      <th>Fecha</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let alarma of resultados">
-      <td>{{ alarma.id }}</td>
-      <td>{{ alarma.categoria }}</td>
-      <td>{{ alarma.fecha }}</td>
-      <td>{{ alarma.estado }}</td>
-    </tr>
-  </tbody>
-</table>
