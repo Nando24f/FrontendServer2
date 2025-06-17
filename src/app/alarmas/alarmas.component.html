@@ -1,21 +1,13 @@
-<h2>Alarmas Activas</h2>
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Usuario</th>
-      <th>Categoría</th>
-      <th>Prioridad</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let alarma of alarmas">
-      <td>{{ alarma.id }}</td>
-      <td>{{ alarma.nombre_usuario }}</td>
-      <td>{{ alarma.categoria }}</td>
-      <td>{{ alarma.prioridad }}</td>
-      <td>{{ alarma.estado }}</td>
-    </tr>
-  </tbody>
-</table>
+<h2>Últimas 10 Alarmas Activas</h2>
+<ul>
+  <li *ngFor="let alarma of alarmas">
+    {{ alarma.categoria }} - {{ alarma.estado }} - {{ alarma.fecha }} - {{ alarma.hora }}
+  </li>
+</ul>
+
+<h2>Alarmas con Ubicación</h2>
+<ul>
+  <li *ngFor="let alarma of alarmasUbicacion">
+    {{ alarma.latitud }}, {{ alarma.longitud }} - {{ alarma.descripcion_evento }}
+  </li>
+</ul>

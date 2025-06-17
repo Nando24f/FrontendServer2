@@ -11,13 +11,12 @@ import { CommonModule } from '@angular/common';
 })
 export class AlarmasComponent implements OnInit {
   alarmas: any[] = [];
+  alarmasUbicacion: any[] = [];
 
   constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.alarmasService.getUltimasAlarmasActivas().subscribe({
-      next: (data) => this.alarmas = data,
-      error: (err) => console.error('Error cargando alarmas activas:', err)
-    });
+    this.alarmasService.getUltimasAlarmasActivas().subscribe(data => this.alarmas = data);
+    this.alarmasService.getAlarmasConUbicacion().subscribe(data => this.alarmasUbicacion = data);
   }
 }

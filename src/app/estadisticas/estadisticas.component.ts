@@ -12,31 +12,15 @@ import { ChartModule } from 'primeng/chart';
   styleUrls: ['./estadisticas.component.css']
 })
 export class EstadisticasComponent implements OnInit {
-  datos: any;
-  opciones: any;
+  categorias: any[] = [];
+  estados: any[] = [];
+  usuarios: any[] = [];
 
   constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.alarmasService.getConteoPorEstado().subscribe({
-      next: (res) => {
-        const labels = res.map((e: any) => e.estado);
-        const valores = res.map((e: any) => e.total);
-
-        this.datos = {
-          labels,
-          datasets: [{
-            data: valores,
-            backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#FF6384']
-          }]
-        };
-
-        this.opciones = {
-          responsive: true,
-          maintainAspectRatio: false
-        };
-      },
-      error: (err) => console.error('Error al cargar estadísticas:', err)
-    });
+    this.alarmasService.getConteoPorCategoria().subscribe(data => this.categorias = data);
+    this.alarmasService.getConteoPorEstado().subscribe(data => this.estados = data);
+    this.alarmasService.getTotalAlarmasPorUsuario().subscribe(data => this.usuarios = data);
   }
 }
