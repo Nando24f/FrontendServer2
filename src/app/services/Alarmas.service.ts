@@ -6,11 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AlarmasService {
-  private apiUrl = 'http://200.13.4.251:9090/api'; // Asegúrate que el puerto sea correcto
+  // Usamos ruta relativa para que Angular use el proxy (proxy.conf.json)
+  private apiUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
-  // Métodos EXACTAMENTE como están en tu TestingController.java
   getUltimasAlarmasActivas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/activas`);
   }
