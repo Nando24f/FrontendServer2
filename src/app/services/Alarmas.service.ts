@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AlarmasService {
-  private apiUrl = 'http://200.13.4.251:9090/api'; // Asegúrate que el puerto sea correcto
+  private apiUrl = 'http://200.13.4.251:8080/api'; // Asegúrate que el puerto sea correcto
 
   constructor(private http: HttpClient) {}
 
