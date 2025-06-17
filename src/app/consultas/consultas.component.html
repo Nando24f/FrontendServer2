@@ -1,0 +1,28 @@
+<h2>Consulta de Alarmas por Usuario</h2>
+
+<div>
+  <label>ID de Usuario:</label>
+  <input type="number" [(ngModel)]="idUsuario" placeholder="Ej: 1" />
+  <button (click)="buscarPorUsuario()">Buscar</button>
+</div>
+
+<p *ngIf="mensajeError" style="color:red">{{ mensajeError }}</p>
+
+<table *ngIf="resultados.length > 0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Categoría</th>
+      <th>Fecha</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let alarma of resultados">
+      <td>{{ alarma.id }}</td>
+      <td>{{ alarma.categoria }}</td>
+      <td>{{ alarma.fecha }}</td>
+      <td>{{ alarma.estado }}</td>
+    </tr>
+  </tbody>
+</table>

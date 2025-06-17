@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
-import { EmployeeComponent } from './employee/employee.component';
+import { AlarmasComponent } from './alarmas/alarmas.component';
+import { EstadisticasComponent } from './estadisticas/estadisticas.component';
+import { ConsultasComponent } from './consultas/consultas.component';
 
 export const routes: Routes = [
-  { path: '', component: EmployeeComponent }, 
-
-  // Otras rutas...
+  { path: 'alarmas', component: AlarmasComponent },
+  { path: 'estadisticas', component: EstadisticasComponent },
+  { path: 'consultas', component: ConsultasComponent },
+  { path: '', redirectTo: 'alarmas', pathMatch: 'full' }
 ];

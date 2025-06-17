@@ -1,0 +1,21 @@
+<h2>Alarmas Activas</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Usuario</th>
+      <th>Categoría</th>
+      <th>Prioridad</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let alarma of alarmas">
+      <td>{{ alarma.id }}</td>
+      <td>{{ alarma.nombre_usuario }}</td>
+      <td>{{ alarma.categoria }}</td>
+      <td>{{ alarma.prioridad }}</td>
+      <td>{{ alarma.estado }}</td>
+    </tr>
+  </tbody>
+</table>
