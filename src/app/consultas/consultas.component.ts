@@ -1,10 +1,13 @@
-
 import { Component } from '@angular/core';
 import { AlarmasService } from '../services/Alarmas.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-consultas',
   templateUrl: './consultas.component.html',
+  imports: [CommonModule,FormsModule],
+  standalone: true,
   styleUrls: ['./consultas.component.css']
 })
 export class ConsultasComponent {
