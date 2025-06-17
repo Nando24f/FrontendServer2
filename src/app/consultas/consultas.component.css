@@ -1,8 +1,13 @@
-
-.consultas-container {
-  padding: 1rem;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
 }
-
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
 section {
-  margin-bottom: 2rem;
+  margin-bottom: 40px;
 }

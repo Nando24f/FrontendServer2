@@ -1,20 +1,46 @@
 <h2>Estadísticas por Categoría</h2>
-<ul>
-  <li *ngFor="let c of categorias">
-    {{ c.categoria }}: {{ c.total }}
-  </li>
-</ul>
+<table>
+  <thead>
+    <tr><th>Categoría</th><th>Total</th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of paginar(estCat, paginaCat)">
+      <td>{{ item.categoria }}</td>
+      <td>{{ item.total }}</td>
+    </tr>
+  </tbody>
+</table>
+<button (click)="anteriorCat()" [disabled]="paginaCat === 1">Anterior</button>
+<button (click)="siguienteCat()" [disabled]="paginaCat * tamanio >= estCat.length">Siguiente</button>
+
 
 <h2>Estadísticas por Estado</h2>
-<ul>
-  <li *ngFor="let e of estados">
-    {{ e.estado }}: {{ e.total }}
-  </li>
-</ul>
+<table>
+  <thead>
+    <tr><th>Estado</th><th>Total</th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of paginar(estEstado, paginaEstado)">
+      <td>{{ item.estado }}</td>
+      <td>{{ item.total }}</td>
+    </tr>
+  </tbody>
+</table>
+<button (click)="anteriorEstado()" [disabled]="paginaEstado === 1">Anterior</button>
+<button (click)="siguienteEstado()" [disabled]="paginaEstado * tamanio >= estEstado.length">Siguiente</button>
+
 
 <h2>Total de Alarmas por Usuario</h2>
-<ul>
-  <li *ngFor="let u of usuarios">
-    {{ u.nombre }} {{ u.apellido }}: {{ u.total_alarmas }}
-  </li>
-</ul>
+<table>
+  <thead>
+    <tr><th>Usuario</th><th>Total</th></tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of paginar(estUsuarios, paginaUsuarios)">
+      <td>{{ item.nombre }} {{ item.apellido }}</td>
+      <td>{{ item.total_alarmas }}</td>
+    </tr>
+  </tbody>
+</table>
+<button (click)="anteriorUsuarios()" [disabled]="paginaUsuarios === 1">Anterior</button>
+<button (click)="siguienteUsuarios()" [disabled]="paginaUsuarios * tamanio >= estUsuarios.length">Siguiente</button>
