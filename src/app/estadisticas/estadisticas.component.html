@@ -1,46 +1,96 @@
-<h2>Estadísticas por Categoría</h2>
-<table>
-  <thead>
-    <tr><th>Categoría</th><th>Total</th></tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of paginar(estCat, paginaCat)">
-      <td>{{ item.categoria }}</td>
-      <td>{{ item.total }}</td>
-    </tr>
-  </tbody>
-</table>
-<button (click)="anteriorCat()" [disabled]="paginaCat === 1">Anterior</button>
-<button (click)="siguienteCat()" [disabled]="paginaCat * tamanio >= estCat.length">Siguiente</button>
+<h2>Consultas Avanzadas</h2>
 
+<!-- Consulta por Usuario -->
+<section>
+  <h3>Alarmas por Usuario</h3>
+  <input type="number" [(ngModel)]="usuarioId" placeholder="ID de Usuario" />
+  <button (click)="consultarPorUsuario()">Buscar</button>
+  <div *ngIf="alarmasPorUsuario.length">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Categoría</th><th>Fecha</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of paginar(alarmasPorUsuario, paginaUsuario)">
+          <td>{{ a.id }}</td>
+          <td>{{ a.categoria }}</td>
+          <td>{{ a.fecha }}</td>
+          <td>{{ a.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button (click)="paginaUsuario = paginaUsuario - 1" [disabled]="paginaUsuario === 1">Anterior</button>
+    <button (click)="paginaUsuario = paginaUsuario + 1" [disabled]="paginaUsuario * tamanio >= alarmasPorUsuario.length">Siguiente</button>
+  </div>
+</section>
 
-<h2>Estadísticas por Estado</h2>
-<table>
-  <thead>
-    <tr><th>Estado</th><th>Total</th></tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of paginar(estEstado, paginaEstado)">
-      <td>{{ item.estado }}</td>
-      <td>{{ item.total }}</td>
-    </tr>
-  </tbody>
-</table>
-<button (click)="anteriorEstado()" [disabled]="paginaEstado === 1">Anterior</button>
-<button (click)="siguienteEstado()" [disabled]="paginaEstado * tamanio >= estEstado.length">Siguiente</button>
+<!-- Consulta por Rango -->
+<section>
+  <h3>Alarmas por Rango de Fechas</h3>
+  <input type="date" [(ngModel)]="fechaInicio" />
+  <input type="date" [(ngModel)]="fechaFin" />
+  <button (click)="consultarPorRango()">Buscar</button>
+  <div *ngIf="alarmasPorRango.length">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Categoría</th><th>Fecha</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of paginar(alarmasPorRango, paginaRango)">
+          <td>{{ a.id }}</td>
+          <td>{{ a.categoria }}</td>
+          <td>{{ a.fecha }}</td>
+          <td>{{ a.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button (click)="paginaRango = paginaRango - 1" [disabled]="paginaRango === 1">Anterior</button>
+    <button (click)="paginaRango = paginaRango + 1" [disabled]="paginaRango * tamanio >= alarmasPorRango.length">Siguiente</button>
+  </div>
+</section>
 
+<!-- Críticas -->
+<section>
+  <h3>Alarmas Críticas No Resueltas</h3>
+  <button (click)="consultarCriticas()">Cargar</button>
+  <div *ngIf="alarmasCriticas.length">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Categoría</th><th>Fecha</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of paginar(alarmasCriticas, paginaCriticas)">
+          <td>{{ a.id }}</td>
+          <td>{{ a.categoria }}</td>
+          <td>{{ a.fecha }}</td>
+          <td>{{ a.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button (click)="paginaCriticas = paginaCriticas - 1" [disabled]="paginaCriticas === 1">Anterior</button>
+    <button (click)="paginaCriticas = paginaCriticas + 1" [disabled]="paginaCriticas * tamanio >= alarmasCriticas.length">Siguiente</button>
+  </div>
+</section>
 
-<h2>Total de Alarmas por Usuario</h2>
-<table>
-  <thead>
-    <tr><th>Usuario</th><th>Total</th></tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of paginar(estUsuarios, paginaUsuarios)">
-      <td>{{ item.nombre }} {{ item.apellido }}</td>
-      <td>{{ item.total_alarmas }}</td>
-    </tr>
-  </tbody>
-</table>
-<button (click)="anteriorUsuarios()" [disabled]="paginaUsuarios === 1">Anterior</button>
-<button (click)="siguienteUsuarios()" [disabled]="paginaUsuarios * tamanio >= estUsuarios.length">Siguiente</button>
+<!-- Resueltas -->
+<section>
+  <h3>Alarmas Resueltas Últimos 7 Días</h3>
+  <button (click)="consultarResueltas()">Cargar</button>
+  <div *ngIf="alarmasResueltas.length">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Categoría</th><th>Fecha</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of paginar(alarmasResueltas, paginaResueltas)">
+          <td>{{ a.id }}</td>
+          <td>{{ a.categoria }}</td>
+          <td>{{ a.fecha }}</td>
+          <td>{{ a.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button (click)="paginaResueltas = paginaResueltas - 1" [disabled]="paginaResueltas === 1">Anterior</button>
+    <button (click)="paginaResueltas = paginaResueltas + 1" [disabled]="paginaResueltas * tamanio >= alarmasResueltas.length">Siguiente</button>
+  </div>
+</section>

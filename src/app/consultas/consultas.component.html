@@ -12,15 +12,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let a of paginar(alarmasPorUsuario, paginaUsuario)">
-          <td>{{ a.id }}</td>
-          <td>{{ a.categoria }}</td>
-          <td>{{ a.fecha }}</td>
-          <td>{{ a.estado }}</td>
+          <td>{{ a.id }}</td><td>{{ a.categoria }}</td><td>{{ a.fecha }}</td><td>{{ a.estado }}</td>
         </tr>
       </tbody>
     </table>
-    <button (click)="anteriorUsuario()" [disabled]="paginaUsuario === 1">Anterior</button>
-    <button (click)="siguienteUsuario()" [disabled]="paginaUsuario * tamanio >= alarmasPorUsuario.length">Siguiente</button>
+    <button (click)="paginaUsuario = paginaUsuario - 1" [disabled]="paginaUsuario === 1">Anterior</button>
+    <button (click)="paginaUsuario = paginaUsuario + 1" [disabled]="paginaUsuario * tamanio >= alarmasPorUsuario.length">Siguiente</button>
   </div>
 </section>
 
@@ -37,15 +34,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let a of paginar(alarmasPorRango, paginaRango)">
-          <td>{{ a.id }}</td>
-          <td>{{ a.categoria }}</td>
-          <td>{{ a.fecha }}</td>
-          <td>{{ a.estado }}</td>
+          <td>{{ a.id }}</td><td>{{ a.categoria }}</td><td>{{ a.fecha }}</td><td>{{ a.estado }}</td>
         </tr>
       </tbody>
     </table>
-    <button (click)="anteriorRango()" [disabled]="paginaRango === 1">Anterior</button>
-    <button (click)="siguienteRango()" [disabled]="paginaRango * tamanio >= alarmasPorRango.length">Siguiente</button>
+    <button (click)="paginaRango = paginaRango - 1" [disabled]="paginaRango === 1">Anterior</button>
+    <button (click)="paginaRango = paginaRango + 1" [disabled]="paginaRango * tamanio >= alarmasPorRango.length">Siguiente</button>
   </div>
 </section>
 
@@ -60,15 +54,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let a of paginar(alarmasCriticas, paginaCriticas)">
-          <td>{{ a.id }}</td>
-          <td>{{ a.categoria }}</td>
-          <td>{{ a.fecha }}</td>
-          <td>{{ a.estado }}</td>
+          <td>{{ a.id }}</td><td>{{ a.categoria }}</td><td>{{ a.fecha }}</td><td>{{ a.estado }}</td>
         </tr>
       </tbody>
     </table>
-    <button (click)="anteriorCriticas()" [disabled]="paginaCriticas === 1">Anterior</button>
-    <button (click)="siguienteCriticas()" [disabled]="paginaCriticas * tamanio >= alarmasCriticas.length">Siguiente</button>
+    <button (click)="paginaCriticas = paginaCriticas - 1" [disabled]="paginaCriticas === 1">Anterior</button>
+    <button (click)="paginaCriticas = paginaCriticas + 1" [disabled]="paginaCriticas * tamanio >= alarmasCriticas.length">Siguiente</button>
   </div>
 </section>
 
@@ -83,14 +74,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let a of paginar(alarmasResueltas, paginaResueltas)">
-          <td>{{ a.id }}</td>
-          <td>{{ a.categoria }}</td>
-          <td>{{ a.fecha }}</td>
-          <td>{{ a.estado }}</td>
+          <td>{{ a.id }}</td><td>{{ a.categoria }}</td><td>{{ a.fecha }}</td><td>{{ a.estado }}</td>
         </tr>
       </tbody>
     </table>
-    <button (click)="anteriorResueltas()" [disabled]="paginaResueltas === 1">Anterior</button>
-    <button (click)="siguienteResueltas()" [disabled]="paginaResueltas * tamanio >= alarmasResueltas.length">Siguiente</button>
+    <button (click)="paginaResueltas = paginaResueltas - 1" [disabled]="paginaResueltas === 1">Anterior</button>
+    <button (click)="paginaResueltas = paginaResueltas + 1" [disabled]="paginaResueltas * tamanio >= alarmasResueltas.length">Siguiente</button>
   </div>
 </section>
