@@ -1,0 +1,12 @@
+<google-map
+  height="400px"
+  width="100%"
+  [center]="center"
+  [zoom]="zoom"
+>
+  <map-marker
+    *ngFor="let marcador of marcadores"
+    [position]="{ lat: marcador.lat, lng: marcador.lng }"
+    [label]="marcador.label ?? ''"
+  ></map-marker>
+</google-map>

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AlarmasService } from '../services/Alarmas.service';
 import { Chart } from 'chart.js/auto';
+import { MapaComponent } from '../mapa/mapa.component';
 
 @Component({
   selector: 'app-consultas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MapaComponent],
   templateUrl: './consultas.component.html',
   styleUrls: ['./consultas.component.css']
 })

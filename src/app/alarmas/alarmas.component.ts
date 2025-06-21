@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AlarmasService } from '../services/Alarmas.service';
 import { CommonModule } from '@angular/common';
+import { MapaComponent } from '../mapa/mapa.component';
 
 @Component({
   selector: 'app-alarmas',
   templateUrl: './alarmas.component.html',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MapaComponent],
   styleUrls: ['./alarmas.component.css']
 })
 export class AlarmasComponent implements OnInit {
@@ -18,6 +19,14 @@ export class AlarmasComponent implements OnInit {
   tamanio = 5;
 
   constructor(private alarmasService: AlarmasService) {}
+
+  get marcadoresMapa() {
+    return this.alarmasMapa.map((a: any) => ({
+      lat: a.latitud,
+      lng: a.longitud,
+      label: `${a.descripcion_evento}`
+    }));
+  }
 
   ngOnInit(): void {
     this.alarmasService.getUltimasAlarmasActivas().subscribe(data => {

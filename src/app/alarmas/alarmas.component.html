@@ -15,7 +15,8 @@
 </table>
 <button (click)="anteriorActivas()" [disabled]="paginaActivas === 1">Anterior</button>
 <button (click)="siguienteActivas()" [disabled]="paginaActivas * tamanio >= alarmasActivas.length">Siguiente</button>
-
+<h2>Mapa de Alarmas</h2>
+<app-mapa [marcadores]="marcadoresMapa"></app-mapa>
 <h2>Alarmas con Ubicación</h2>
 <table>
   <thead>
