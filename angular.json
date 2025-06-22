@@ -27,7 +27,7 @@
               }
             ],
             "styles": [
-              "src/styles.css","app.components.css"
+              "src/styles.css"
             ],
             "scripts": []
           },
