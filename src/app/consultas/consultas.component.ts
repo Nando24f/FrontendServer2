@@ -8,7 +8,7 @@ import { MapaComponent } from '../mapa/mapa.component';
 @Component({
   selector: 'app-consultas',
   standalone: true,
-  imports: [CommonModule, FormsModule, MapaComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './consultas.component.html',
   styleUrls: ['./consultas.component.css']
 })
