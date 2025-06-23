@@ -59,6 +59,6 @@ export class AlarmasService {
   }
 
   getAlarmasPorCategoria(categoria: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/alarmas/porcategoria?categoria=${categoria}`);
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/por_categoria?categoria=${categoria}`);
   }
 }
