@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AlarmasService {
-  private apiUrl = 'http://localhost:9090/alarmas';
+  private apiUrl = 'http://200.13.4.251:9090/alarmas';
 
   constructor(private http: HttpClient) {}
 
