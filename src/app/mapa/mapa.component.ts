@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
+declare let L: any;
 
 @Component({
   selector: 'app-mapa',
-  standalone: true,
   templateUrl: './mapa.component.html',
   styleUrls: ['./mapa.component.css']
 })
