@@ -39,8 +39,8 @@ export class AlarmasService {
   }
 
   getAlarmaPorId(id: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/alarmas/${id}`);
-  }
+  return this.http.get<any[]>(`${this.apiUrl}/alarmas/id/${id}`);
+}
 
   getCriticasNoResueltas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/criticas`);
