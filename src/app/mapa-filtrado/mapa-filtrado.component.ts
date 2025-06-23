@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { AlarmasService } from '../services/Alarmas.service';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MapaComponent } from '../mapa/mapa.component';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-mapa-filtrado',
-  imports: [CommonModule, MapaComponent, FormsModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule, MapaComponent],
   templateUrl: './mapa-filtrado.component.html',
   styleUrls: ['./mapa-filtrado.component.css']
 })
 export class MapaFiltradoComponent implements OnInit {
   categorias: string[] = [];
-  usuarios: any[] = [];
   marcadoresFiltrados: any[] = [];
 
   filtroCategoria: string = '';
@@ -24,19 +24,24 @@ export class MapaFiltradoComponent implements OnInit {
   constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.alarmasService.getCategoriasDistintas().subscribe(cats => this.categorias = cats);
-    this.alarmasService.getUsuariosConAlarmas().subscribe(users => this.usuarios = users);
-    this.cargarTodasConUbicacion();
+    this.cargarCategorias();
+    this.cargarAlarmasIniciales();
   }
 
-  cargarTodasConUbicacion(): void {
+  cargarCategorias(): void {
+    this.alarmasService.getConteoPorCategoria().subscribe(cats => {
+      this.categorias = cats.map(c => c.categoria);
+    });
+  }
+
+  cargarAlarmasIniciales(): void {
     this.alarmasService.getAlarmasConUbicacion().subscribe(alarmas => {
       this.marcadoresFiltrados = alarmas;
     });
   }
 
   aplicarFiltros(): void {
-    // 1. Solo filtro por categoría
+    // Filtro solo por categoría
     if (this.filtroCategoria && !this.filtroAutor && !this.fechaInicio && !this.fechaFin) {
       this.alarmasService.getAlarmasPorCategoria(this.filtroCategoria).subscribe(res => {
         this.marcadoresFiltrados = this.filtrarPorTexto(res);
@@ -44,7 +49,7 @@ export class MapaFiltradoComponent implements OnInit {
       return;
     }
 
-    // 2. Solo filtro por usuario
+    // Filtro solo por autor
     if (this.filtroAutor && !this.filtroCategoria && !this.fechaInicio && !this.fechaFin) {
       const id = parseInt(this.filtroAutor, 10);
       if (!isNaN(id)) {
@@ -55,7 +60,7 @@ export class MapaFiltradoComponent implements OnInit {
       return;
     }
 
-    // 3. Solo fechas
+    // Filtro solo por rango de fecha
     if (this.fechaInicio && this.fechaFin && !this.filtroCategoria && !this.filtroAutor) {
       this.alarmasService.getAlarmasPorRango(this.fechaInicio, this.fechaFin).subscribe(res => {
         this.marcadoresFiltrados = this.filtrarPorTexto(res);
@@ -63,19 +68,21 @@ export class MapaFiltradoComponent implements OnInit {
       return;
     }
 
-    // 4. Filtros combinados no soportados por backend → aplicar uno y filtrar el resto
+    // Filtros combinados: aplicar todos localmente
     this.alarmasService.getAlarmasConUbicacion().subscribe(res => {
       let datos = res;
 
       if (this.filtroCategoria) {
         datos = datos.filter(d => d.categoria === this.filtroCategoria);
       }
+
       if (this.filtroAutor) {
         const id = parseInt(this.filtroAutor, 10);
         if (!isNaN(id)) {
           datos = datos.filter(d => d.usuarioId === id);
         }
       }
+
       if (this.fechaInicio && this.fechaFin) {
         const desde = new Date(this.fechaInicio);
         const hasta = new Date(this.fechaFin);

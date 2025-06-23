@@ -50,17 +50,15 @@ export class AlarmasService {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/resueltas`);
   }
 
-  /** 🔹 NUEVA: Obtener todas las categorías distintas de alarmas */
   getCategoriasDistintas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/categorias_distintas`);
   }
 
-  /** 🔹 NUEVA: Obtener los usuarios que han generado alarmas */
   getUsuariosConAlarmas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/usuarios`);
   }
-  getAlarmasPorCategoria(categoria: string): Observable<any[]> {
-  return this.http.get<any[]>(`${this.apiUrl}/alarmas/por_categoria?categoria=${categoria}`);
-}
 
+  getAlarmasPorCategoria(categoria: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/por_categoria?categoria=${categoria}`);
+  }
 }
