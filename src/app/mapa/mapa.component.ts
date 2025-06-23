@@ -28,7 +28,8 @@ export class MapaComponent implements AfterViewInit {
       if (m.latitud && m.longitud) {
         L.marker([m.latitud, m.longitud]).addTo(this.mapa!)
           .bindPopup(`<b>${m.categoria || 'Alarma'}</b><br>${m.descripcion || ''}`);
-      }
+
+        }
     });
   }
 }

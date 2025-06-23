@@ -29,13 +29,13 @@ export class MapaFiltradoComponent implements OnInit {
   }
 
   cargarCategorias(): void {
-    this.alarmasService.getConteoPorCategoria().subscribe(cats => {
-      this.categorias = cats.map(c => c.categoria);
+    this.alarmasService.getCategorias().subscribe(cats => {
+      this.categorias = cats;
     });
   }
 
   cargarAlarmasIniciales(): void {
-    this.alarmasService.getAlarmasConUbicacion().subscribe(alarmas => {
+    this.alarmasService.getAlarmas().subscribe(alarmas => {
       this.marcadoresFiltrados = alarmas;
     });
   }
