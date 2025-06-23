@@ -1,50 +1,99 @@
-
 import { Component, OnInit } from '@angular/core';
 import { AlarmasService } from '../services/Alarmas.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MapaComponent } from '../mapa/mapa.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-mapa-filtrado',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MapaComponent],
+  imports: [CommonModule, MapaComponent, FormsModule],
   templateUrl: './mapa-filtrado.component.html',
   styleUrls: ['./mapa-filtrado.component.css']
 })
 export class MapaFiltradoComponent implements OnInit {
-  todasLasAlarmas: any[] = [];
-  marcadoresFiltrados: any[] = [];
   categorias: string[] = [];
+  usuarios: any[] = [];
+  marcadoresFiltrados: any[] = [];
 
-  filtroCategoria = '';
-  filtroBusqueda = '';
-  filtroAutor = '';
-  fechaInicio?: string;
-  fechaFin?: string;
+  filtroCategoria: string = '';
+  filtroBusqueda: string = '';
+  filtroAutor: string = '';
+  fechaInicio: string = '';
+  fechaFin: string = '';
 
   constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.alarmasService.getAlarmasConUbicacion().subscribe(data => {
-      this.todasLasAlarmas = data;
-      this.marcadoresFiltrados = data;
-      this.categorias = Array.from(new Set(data.map((a: any) => a.categoria)));
+    this.alarmasService.getCategoriasDistintas().subscribe(cats => this.categorias = cats);
+    this.alarmasService.getUsuariosConAlarmas().subscribe(users => this.usuarios = users);
+    this.cargarTodasConUbicacion();
+  }
+
+  cargarTodasConUbicacion(): void {
+    this.alarmasService.getAlarmasConUbicacion().subscribe(alarmas => {
+      this.marcadoresFiltrados = alarmas;
     });
   }
 
-  aplicarFiltros() {
-    this.marcadoresFiltrados = this.todasLasAlarmas.filter(a => {
-      const catOk = !this.filtroCategoria || a.categoria === this.filtroCategoria;
-      const busqOk = !this.filtroBusqueda || JSON.stringify(a).toLowerCase().includes(this.filtroBusqueda.toLowerCase());
-      const autorOk = !this.filtroAutor || (a.nombre_usuario?.toLowerCase().includes(this.filtroAutor.toLowerCase()));
+  aplicarFiltros(): void {
+    // 1. Solo filtro por categoría
+    if (this.filtroCategoria && !this.filtroAutor && !this.fechaInicio && !this.fechaFin) {
+      this.alarmasService.getAlarmasPorCategoria(this.filtroCategoria).subscribe(res => {
+        this.marcadoresFiltrados = this.filtrarPorTexto(res);
+      });
+      return;
+    }
 
-      const fecha = new Date(a.fecha);
-      const desde = this.fechaInicio ? new Date(this.fechaInicio) : null;
-      const hasta = this.fechaFin ? new Date(this.fechaFin) : null;
-      const fechaOk = (!desde || fecha >= desde) && (!hasta || fecha <= hasta);
+    // 2. Solo filtro por usuario
+    if (this.filtroAutor && !this.filtroCategoria && !this.fechaInicio && !this.fechaFin) {
+      const id = parseInt(this.filtroAutor, 10);
+      if (!isNaN(id)) {
+        this.alarmasService.getAlarmasPorUsuario(id).subscribe(res => {
+          this.marcadoresFiltrados = this.filtrarPorTexto(res);
+        });
+      }
+      return;
+    }
 
-      return catOk && busqOk && autorOk && fechaOk;
+    // 3. Solo fechas
+    if (this.fechaInicio && this.fechaFin && !this.filtroCategoria && !this.filtroAutor) {
+      this.alarmasService.getAlarmasPorRango(this.fechaInicio, this.fechaFin).subscribe(res => {
+        this.marcadoresFiltrados = this.filtrarPorTexto(res);
+      });
+      return;
+    }
+
+    // 4. Filtros combinados no soportados por backend → aplicar uno y filtrar el resto
+    this.alarmasService.getAlarmasConUbicacion().subscribe(res => {
+      let datos = res;
+
+      if (this.filtroCategoria) {
+        datos = datos.filter(d => d.categoria === this.filtroCategoria);
+      }
+      if (this.filtroAutor) {
+        const id = parseInt(this.filtroAutor, 10);
+        if (!isNaN(id)) {
+          datos = datos.filter(d => d.usuarioId === id);
+        }
+      }
+      if (this.fechaInicio && this.fechaFin) {
+        const desde = new Date(this.fechaInicio);
+        const hasta = new Date(this.fechaFin);
+        datos = datos.filter(d => {
+          const fecha = new Date(d.fecha);
+          return fecha >= desde && fecha <= hasta;
+        });
+      }
+
+      this.marcadoresFiltrados = this.filtrarPorTexto(datos);
     });
+  }
+
+  filtrarPorTexto(alarmas: any[]): any[] {
+    if (!this.filtroBusqueda) return alarmas;
+    const texto = this.filtroBusqueda.toLowerCase();
+    return alarmas.filter(a =>
+      JSON.stringify(a).toLowerCase().includes(texto)
+    );
   }
 }

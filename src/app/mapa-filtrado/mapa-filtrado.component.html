@@ -18,9 +18,10 @@
       <input type="date" [(ngModel)]="fechaFin" />
     </section>
     <section>
-      <label>Autor</label>
-      <input type="text" [(ngModel)]="filtroAutor" placeholder="Nombre de usuario" />
-    </section>
+  <label>Autor (ID)</label>
+  <input type="number" [(ngModel)]="filtroAutor" placeholder="ID de usuario" />
+</section>
+
     <button (click)="aplicarFiltros()">Aplicar Filtros</button>
   </div>
 
