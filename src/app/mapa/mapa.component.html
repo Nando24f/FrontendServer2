@@ -1,12 +1,2 @@
-<google-map
-  height="400px"
-  width="100%"
-  [center]="center"
-  [zoom]="zoom"
->
-  <map-marker
-    *ngFor="let marcador of marcadores"
-    [position]="{ lat: marcador.lat, lng: marcador.lng }"
-    [label]="marcador.label ?? ''"
-  ></map-marker>
-</google-map>
+<!-- Aquí irá tu mapa real -->
+<p>Aquí se mostraría el mapa con {{ marcadores.length }} marcador(es).</p>
