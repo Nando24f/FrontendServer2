@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AlarmasService } from '../services/Alarmas.service';
 import { FormsModule } from '@angular/forms';
+import { MapaComponent } from '../mapa/mapa.component';
 
 @Component({
   selector: 'app-mapa-filtrado',
-  imports: [FormsModule],
+  imports: [FormsModule, MapaComponent],
   templateUrl: './mapa-filtrado.component.html',
   styleUrls: ['./mapa-filtrado.component.css']
 })
