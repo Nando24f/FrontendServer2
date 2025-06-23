@@ -8,7 +8,7 @@ export const routes: Routes = [
   { path: 'alarmas', component: AlarmasComponent },
   { path: 'estadisticas', component: EstadisticasComponent },
   { path: 'consultas', component: ConsultasComponent },
-  { path: '', redirectTo: 'alarmas', pathMatch: 'full' }
+  { path: '', redirectTo: 'alarmas', pathMatch: 'full' },
   { path: 'mapa-avanzado', component: MapaFiltradoComponent },
   { path: '', redirectTo: 'mapa-avanzado', pathMatch: 'full' }
 ];
