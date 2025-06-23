@@ -1,77 +1,88 @@
 import { Component, OnInit } from '@angular/core';
 import { AlarmasService } from '../services/Alarmas.service';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MapaComponent } from '../mapa/mapa.component';
 
 @Component({
   selector: 'app-mapa-filtrado',
-  imports: [FormsModule, MapaComponent],
+  imports: [CommonModule,FormsModule,MapaComponent],
   templateUrl: './mapa-filtrado.component.html',
   styleUrls: ['./mapa-filtrado.component.css']
 })
 export class MapaFiltradoComponent implements OnInit {
-  todasLasAlarmas: any[] = [];
+  alarmas: any[] = [];
+  alarmasFiltradas: any[] = [];
   marcadoresFiltrados: any[] = [];
-  categorias: string[] = [];
 
   filtroCategoria = '';
   filtroBusqueda = '';
   filtroAutor = '';
-  fechaInicio?: string;
-  fechaFin?: string;
+  usuarioInput: number | null = null;
+  fechaInicio: string = '';
+  fechaFin: string = '';
 
-  alarmasPorUsuario: any[] = [];
-  alarmasPorRango: any[] = [];
-  criticasNoResueltas: any[] = [];
-  resueltasUltimos7Dias: any[] = [];
+  categorias: string[] = [];
 
-  usuarioInput: number = 0;
-
-  constructor(private alarmasService: AlarmasService) {}
+  constructor(private alarmaService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.alarmasService.getAlarmasConUbicacion().subscribe(data => {
-      this.todasLasAlarmas = data;
-      this.marcadoresFiltrados = data;
-      this.categorias = Array.from(new Set(data.map((a: any) => a.categoria)));
+    this.alarmaService.getAlarmasConUbicacion().subscribe(data => {
+      this.alarmas = data;
+      this.aplicarFiltros();
+    });
+
+    this.alarmaService.getCategoriasDistintas().subscribe(data => {
+      this.categorias = data;
     });
   }
 
-  aplicarFiltros() {
-    this.marcadoresFiltrados = this.todasLasAlarmas.filter(a => {
-      const catOk = !this.filtroCategoria || a.categoria === this.filtroCategoria;
-      const busqOk = !this.filtroBusqueda || JSON.stringify(a).toLowerCase().includes(this.filtroBusqueda.toLowerCase());
-      const autorOk = !this.filtroAutor || a.nombre_usuario.toLowerCase().includes(this.filtroAutor.toLowerCase());
-      const fecha = new Date(a.fecha);
-      const desde = this.fechaInicio ? new Date(this.fechaInicio) : null;
-      const hasta = this.fechaFin ? new Date(this.fechaFin) : null;
-      const fechaOk = (!desde || fecha >= desde) && (!hasta || fecha <= hasta);
-      return catOk && busqOk && autorOk && fechaOk;
+  aplicarFiltros(): void {
+    this.alarmasFiltradas = this.alarmas.filter(a =>
+      (!this.filtroCategoria || a.categoria?.toLowerCase() === this.filtroCategoria.toLowerCase()) &&
+      (!this.filtroBusqueda || a.titulo?.toLowerCase().includes(this.filtroBusqueda.toLowerCase())) &&
+      (!this.filtroAutor || a.nombre_usuario?.toLowerCase().includes(this.filtroAutor.toLowerCase())) &&
+      (!this.fechaInicio || new Date(a.fecha) >= new Date(this.fechaInicio)) &&
+      (!this.fechaFin || new Date(a.fecha) <= new Date(this.fechaFin))
+    );
+
+    this.marcadoresFiltrados = this.alarmasFiltradas.map(a => ({
+      lat: a.latitud,
+      lng: a.longitud,
+      titulo: a.titulo,
+      categoria: a.categoria
+    }));
+  }
+
+  buscarPorUsuario(): void {
+    if (this.usuarioInput) {
+      this.alarmaService.getAlarmasPorUsuario(this.usuarioInput).subscribe(data => {
+        this.alarmas = data;
+        this.aplicarFiltros();
+      });
+    }
+  }
+
+  buscarPorRango(): void {
+    if (this.fechaInicio && this.fechaFin) {
+      this.alarmaService.getAlarmasPorRango(this.fechaInicio, this.fechaFin).subscribe(data => {
+        this.alarmas = data;
+        this.aplicarFiltros();
+      });
+    }
+  }
+
+  cargarCriticas(): void {
+    this.alarmaService.getCriticasNoResueltas().subscribe(data => {
+      this.alarmas = data;
+      this.aplicarFiltros();
     });
   }
 
-  buscarPorUsuario() {
-    this.alarmasService.getAlarmaPorId(this.usuarioInput).subscribe(data => {
-      this.alarmasPorUsuario = [data];
-    });
-  }
-
-  buscarPorRango() {
-    if (!this.fechaInicio || !this.fechaFin) return;
-    this.alarmasService.getAlarmasPorRango(this.fechaInicio, this.fechaFin).subscribe(data => {
-      this.alarmasPorRango = data;
-    });
-  }
-
-  cargarCriticas() {
-    this.alarmasService.getCriticasNoResueltas().subscribe(data => {
-      this.criticasNoResueltas = data;
-    });
-  }
-
-  cargarResueltas() {
-    this.alarmasService.getResueltasUltimos7Dias().subscribe(data => {
-      this.resueltasUltimos7Dias = data;
+  cargarResueltas(): void {
+    this.alarmaService.getResueltasUltimos7Dias().subscribe(data => {
+      this.alarmas = data;
+      this.aplicarFiltros();
     });
   }
 }

@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AlarmasService {
-  // Usamos ruta relativa para que Angular use el proxy (proxy.conf.json)
   private apiUrl = '/api';
 
   constructor(private http: HttpClient) {}
@@ -49,5 +48,15 @@ export class AlarmasService {
 
   getResueltasUltimos7Dias(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/alarmas/resueltas`);
+  }
+
+  /** 🔹 NUEVA: Obtener todas las categorías distintas de alarmas */
+  getCategoriasDistintas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/categorias_distintas`);
+  }
+
+  /** 🔹 NUEVA: Obtener los usuarios que han generado alarmas */
+  getUsuariosConAlarmas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/alarmas/usuarios`);
   }
 }

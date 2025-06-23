@@ -1,50 +1,27 @@
-import { Component, Input, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
-import * as L from 'leaflet';
+import { Component, Input, AfterViewInit } from '@angular/core';
+
+declare const google: any;
 
 @Component({
   selector: 'app-mapa',
   templateUrl: './mapa.component.html',
   styleUrls: ['./mapa.component.css']
 })
-export class MapaComponent implements AfterViewInit, OnChanges {
+export class MapaComponent implements AfterViewInit {
   @Input() marcadores: any[] = [];
-  private map: L.Map | undefined;
-  private markerGroup: L.LayerGroup = L.layerGroup();
 
   ngAfterViewInit(): void {
-    this.initMap();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['marcadores'] && this.map) {
-      this.actualizarMarcadores();
-    }
-  }
-
-  private initMap(): void {
-    this.map = L.map('mapa', {
-      center: L.latLng(-38.74, -72.59),
-      zoom: 13
+    const map = new google.maps.Map(document.getElementById("mapa"), {
+      center: { lat: -38.7359, lng: -72.5904 },
+      zoom: 11
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(this.map);
-
-    this.markerGroup.addTo(this.map);
-    this.actualizarMarcadores();
-  }
-
-  private actualizarMarcadores(): void {
-    this.markerGroup.clearLayers();
-    if (!this.marcadores) return;
-
     this.marcadores.forEach(m => {
-      if (m.latitud && m.longitud) {
-        const marker = L.marker([m.latitud, m.longitud])
-          .bindPopup(`<b>ID:</b> ${m.id}<br><b>${m.descripcion || ''}</b>`);
-        this.markerGroup.addLayer(marker);
-      }
+      new google.maps.Marker({
+        position: { lat: m.lat, lng: m.lng },
+        map,
+        title: m.titulo
+      });
     });
   }
 }
