@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 
 declare const google: any;
 
@@ -9,19 +9,17 @@ declare const google: any;
 })
 export class MapaComponent implements AfterViewInit {
   @Input() marcadores: any[] = [];
+  @ViewChild('mapElement', { static: false }) mapElement!: ElementRef;
 
   ngAfterViewInit(): void {
-    const map = new google.maps.Map(document.getElementById("mapa"), {
+  if (typeof google !== 'undefined') {
+    const map = new google.maps.Map(this.mapElement.nativeElement, {
       center: { lat: -38.7359, lng: -72.5904 },
-      zoom: 11
+      zoom: 12
     });
-
-    this.marcadores.forEach(m => {
-      new google.maps.Marker({
-        position: { lat: m.lat, lng: m.lng },
-        map,
-        title: m.titulo
-      });
-    });
+  } else {
+    console.error('Google Maps API no está cargado todavía');
   }
+}
+
 }
