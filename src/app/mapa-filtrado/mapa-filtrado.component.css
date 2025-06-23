@@ -1,18 +1,14 @@
-.contenedor-general {
+
+.contenedor-dashboard {
   display: flex;
   height: 100vh;
-  border: 2px solid black;
-}
-
-.mapa {
-  flex: 3;
-  border-right: 2px solid black;
 }
 
 .panel-filtros {
   flex: 1;
-  background-color: #f3f3f3;
+  background-color: #f2f2f2;
   padding: 1rem;
+  border-right: 2px solid #ccc;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -23,7 +19,7 @@
   flex-direction: column;
 }
 
-.panel-filtros label {
-  font-weight: bold;
-  margin-bottom: 0.3rem;
+.panel-mapa {
+  flex: 3;
+  height: 100%;
 }

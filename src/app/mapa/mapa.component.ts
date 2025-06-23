@@ -1,6 +1,5 @@
-import { Component, Input, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-
-declare const google: any;
+import { Component, Input, AfterViewInit } from '@angular/core';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-mapa',
@@ -9,17 +8,27 @@ declare const google: any;
 })
 export class MapaComponent implements AfterViewInit {
   @Input() marcadores: any[] = [];
-  @ViewChild('mapElement', { static: false }) mapElement!: ElementRef;
+
+  private mapa: L.Map | undefined;
 
   ngAfterViewInit(): void {
-  if (typeof google !== 'undefined') {
-    const map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: { lat: -38.7359, lng: -72.5904 },
-      zoom: 12
-    });
-  } else {
-    console.error('Google Maps API no está cargado todavía');
-  }
-}
+    this.mapa = L.map('mapa-container').setView([-38.7359, -72.5904], 13); // Centro en Temuco aprox.
 
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.mapa);
+
+    this.actualizarMarcadores();
+  }
+
+  private actualizarMarcadores(): void {
+    if (!this.mapa || !this.marcadores) return;
+
+    this.marcadores.forEach((m: any) => {
+      if (m.latitud && m.longitud) {
+        L.marker([m.latitud, m.longitud]).addTo(this.mapa!)
+          .bindPopup(`<b>${m.categoria || 'Alarma'}</b><br>${m.descripcion || ''}`);
+      }
+    });
+  }
 }
