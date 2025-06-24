@@ -29,14 +29,16 @@ export class MapaFiltradoComponent implements OnInit {
   }
 
   obtenerCategorias(): void {
-    this.alarmasService.getCategorias().subscribe({
-      next: (cats) => {
-        this.categorias = cats.map((cat: any) => cat.nombre);
-      },
-      error: (err) => {
-        console.error('Error al obtener categorías:', err);
-      }
-    });
+   this.alarmasService.getCategorias().subscribe({
+  next: (cats) => {
+    console.log('Categorias:', cats); // <- este log te dirá si son strings o no
+    this.categorias = cats.map((c: any) => typeof c === 'string' ? c : c.nombre);
+  },
+  error: (err) => {
+    console.error('Error al obtener categorías:', err);
+  }
+});
+
   }
 
   cargarAlarmasConUbicacion(): void {
