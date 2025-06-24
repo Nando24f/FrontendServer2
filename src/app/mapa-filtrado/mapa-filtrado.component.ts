@@ -21,7 +21,7 @@ export class MapaFiltradoComponent implements OnInit {
   fechaInicio: string = '';
   fechaFin: string = '';
 
-  constructor(private alarmasService: AlarmasService) {}
+  constructor(private alarmasService: AlarmasService) { }
 
   ngOnInit(): void {
     this.obtenerCategorias();
@@ -54,12 +54,11 @@ export class MapaFiltradoComponent implements OnInit {
   aplicarFiltros(): void {
     this.filtrarMarcadores();
   }
-
   filtrarMarcadores(): void {
     this.marcadoresFiltrados = this.marcadores.filter((m) => {
-      const coincideCategoria = !this.filtroCategoria || m.categoria === this.filtroCategoria;
+      const coincideCategoria = !this.filtroCategoria || m.categoria?.toLowerCase() === this.filtroCategoria.toLowerCase();
       const coincideBusqueda = !this.filtroBusqueda || (m.descripcion || '').toLowerCase().includes(this.filtroBusqueda.toLowerCase());
-      const coincideAutor = !this.filtroAutor || m.autor == this.filtroAutor;
+      const coincideAutor = !this.filtroAutor || Number(m.autor) === Number(this.filtroAutor);
 
       const fecha = m.fecha ? new Date(m.fecha) : null;
       const desde = this.fechaInicio ? new Date(this.fechaInicio) : null;
@@ -71,5 +70,7 @@ export class MapaFiltradoComponent implements OnInit {
 
       return coincideCategoria && coincideBusqueda && coincideAutor && coincideFecha;
     });
+
+    console.log('🔍 Resultado de filtro:', this.marcadoresFiltrados);
   }
 }
