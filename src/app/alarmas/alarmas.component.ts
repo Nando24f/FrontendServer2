@@ -29,11 +29,11 @@ export class AlarmasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.alarmasService.getUltimasAlarmasActivas().subscribe(data => {
+    this.alarmasService.getAlarmasActivas().subscribe(data => {
       this.alarmasActivas = data;
     });
 
-    this.alarmasService.getAlarmasConUbicacion().subscribe(data => {
+    this.alarmasService.getMapa().subscribe(data => {
       this.alarmasMapa = data;
     });
   }

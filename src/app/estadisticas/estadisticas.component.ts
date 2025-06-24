@@ -34,9 +34,11 @@ tamanio = 5;
   constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.alarmasService.getConteoPorCategoria().subscribe(data => this.estCat = data);
-    this.alarmasService.getConteoPorEstado().subscribe(data => this.estEstado = data);
-    this.alarmasService.getTotalAlarmasPorUsuario().subscribe(data => this.estUsuarios = data);
+    this.alarmasService.getCategorias().subscribe(data => this.estCat = data);
+    this.alarmasService.getEstados().subscribe(data => this.estEstado = data);
+    if (this.usuarioId) {
+      this.alarmasService.getAlarmaPorId(this.usuarioId).subscribe(data => this.estUsuarios = data);
+    }
   }
 
   paginar(arr: any[], pagina: number) {
@@ -52,10 +54,10 @@ consultarPorRango() {
 }
 
 consultarCriticas() {
-  this.alarmasService.getCriticasNoResueltas().subscribe(data => this.alarmasCriticas = data);
+  this.alarmasService.getCriticas().subscribe(data => this.alarmasCriticas = data);
 }
 
 consultarResueltas() {
-  this.alarmasService.getResueltasUltimos7Dias().subscribe(data => this.alarmasResueltas = data);
+  this.alarmasService.getAlarmasResueltas().subscribe(data => this.alarmasResueltas = data);
 }
 }
