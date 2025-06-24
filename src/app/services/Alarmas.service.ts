@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -10,101 +11,78 @@ export class AlarmasService {
 
   constructor(private http: HttpClient) {}
 
-  // 1. Obtener todas las alarmas
-  getAlarmas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/listar`);
+  // Obtener todas las alarmas activas
+  getAlarmasActivas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/activas`);
   }
 
-  // 2. Buscar por ID
+  // Buscar alarma por ID
   getAlarmaPorId(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/id/${id}`);
   }
 
-  // 3. Buscar por categoría
+  // Buscar por texto
+  buscarAlarmas(texto: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/buscar?texto=${texto}`);
+  }
+
+  // Obtener categorías
+  getCategorias(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/categorias`);
+  }
+
+  // Obtener categorías distintas
+  getCategoriasDistintas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/categorias_distintas`);
+  }
+
+  // Obtener alarmas críticas
+  getCriticas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/criticas`);
+  }
+
+  // Obtener estados
+  getEstados(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/estados`);
+  }
+
+  // Obtener alarmas filtradas
+  getAlarmasFiltradas(params: any): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/filtradas`, { params });
+  }
+
+  // Obtener mapa de alarmas
+  getMapa(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/mapa`);
+  }
+
+  // Obtener por categoría
   getAlarmasPorCategoria(categoria: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/categoria?valor=${categoria}`);
+    return this.http.get<any[]>(`${this.apiUrl}/por_categoria?categoria=${categoria}`);
   }
 
-  // 4. Buscar por usuario
-  getAlarmasPorUsuario(idUsuario: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/usuario?id=${idUsuario}`);
+  // Obtener por usuario (query param)
+  getAlarmasPorUsuario(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuario/${id}`);
   }
 
-  // 5. Buscar por rango de fechas
+  // Obtener por rango
   getAlarmasPorRango(fechaInicio: string, fechaFin: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/rango?inicio=${fechaInicio}&fin=${fechaFin}`);
   }
 
-  // 6. Buscar críticas
-  getAlarmasCriticas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/criticas`);
-  }
-
-  // 7. Buscar resueltas
+  // Obtener alarmas resueltas
   getAlarmasResueltas(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/resueltas`);
   }
 
-  // 8. Categorías
-  getCategorias(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/categorias`);
+  // Obtener usuarios disponibles
+  getUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios`);
   }
 
-  // 9. Buscar por texto
-  buscarAlarmasPorTexto(texto: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/buscar?texto=${texto}`);
-  }
-
-  // 10. Filtros combinados
-  getAlarmasFiltradas(params: {
-    categoria?: string;
-    texto?: string;
-    fechaInicio?: string;
-    fechaFin?: string;
-    autor?: number;
-  }): Observable<any[]> {
-    const query = new URLSearchParams();
-    if (params.categoria) query.append('categoria', params.categoria);
-    if (params.texto) query.append('texto', params.texto);
-    if (params.fechaInicio) query.append('fechaInicio', params.fechaInicio);
-    if (params.fechaFin) query.append('fechaFin', params.fechaFin);
-    if (params.autor != null) query.append('autor', params.autor.toString());
-
-    return this.http.get<any[]>(`${this.apiUrl}/filtradas?${query.toString()}`);
-  }
-
-  // 11. Últimas activas
-  getUltimasAlarmasActivas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/ultimas`);
-  }
-
-  // 12. Con ubicación (para el mapa)
-  getAlarmasConUbicacion(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/conubicacion`);
-  }
-
-  // 13. Críticas no resueltas
-  getCriticasNoResueltas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/criticasnoresueltas`);
-  }
-
-  // 14. Resueltas en los últimos 7 días
-  getResueltasUltimos7Dias(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/resueltas7dias`);
-  }
-
-  // 15. Conteo por categoría
-  getConteoPorCategoria(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/conteo/categoria`);
-  }
-
-  // 16. Conteo por estado
-  getConteoPorEstado(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/conteo/estado`);
-  }
-
-  // 17. Total de alarmas por usuario
-  getTotalAlarmasPorUsuario(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/conteo/usuario`);
+  // Ruta de prueba
+  testBackend(): Observable<any> {
+    return this.http.get<any>(`/api/test`);
   }
 }

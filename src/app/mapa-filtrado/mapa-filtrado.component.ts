@@ -29,26 +29,25 @@ export class MapaFiltradoComponent implements OnInit {
   }
 
   cargarCategorias(): void {
-    this.alarmasService.getConteoPorCategoria().subscribe(cats => {
-      this.categorias = cats.map(c => c.categoria); // extrae solo el string
+    this.alarmasService.getCategoriasDistintas().subscribe(cats => {
+      this.categorias = cats.map(c => c.categoria);
     });
   }
 
   cargarAlarmasIniciales(): void {
-    this.alarmasService.getAlarmas().subscribe(alarmas => {
+    this.alarmasService.getMapa().subscribe(alarmas => {
       this.marcadoresFiltrados = alarmas;
     });
   }
 
   aplicarFiltros(): void {
     const filtros = {
-  categoria: this.filtroCategoria || undefined,
-  texto: this.filtroBusqueda || undefined,
-  fechaInicio: this.fechaInicio || undefined,
-  fechaFin: this.fechaFin || undefined,
-  autor: this.filtroAutor ? parseInt(this.filtroAutor, 10) : undefined
-};
-
+      categoria: this.filtroCategoria || undefined,
+      texto: this.filtroBusqueda || undefined,
+      fechaInicio: this.fechaInicio || undefined,
+      fechaFin: this.fechaFin || undefined,
+      usuario: this.filtroAutor || undefined
+    };
 
     this.alarmasService.getAlarmasFiltradas(filtros).subscribe((datos: any[]) => {
       this.marcadoresFiltrados = datos;

@@ -1,35 +1,46 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-mapa',
-  templateUrl: './mapa.component.html',
-  styleUrls: ['./mapa.component.css']
+  template: '<div id="mapa" style="height: 100%; width: 100%"></div>',
+  standalone: true
 })
-export class MapaComponent implements AfterViewInit {
+export class MapaComponent implements OnChanges {
   @Input() marcadores: any[] = [];
 
-  private mapa: L.Map | undefined;
+  private mapa: any;
 
-  ngAfterViewInit(): void {
-    this.mapa = L.map('mapa-container').setView([-38.7359, -72.5904], 13); // Centro en Temuco aprox.
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(this.mapa);
-
-    this.actualizarMarcadores();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['marcadores']) {
+      this.cargarMapa();
+    }
   }
 
-  private actualizarMarcadores(): void {
-    if (!this.mapa || !this.marcadores) return;
+  private cargarMapa(): void {
+    if (!this.mapa) {
+      this.mapa = L.map('mapa').setView([-38.7359, -72.5904], 13); // Temuco
 
-    this.marcadores.forEach((m: any) => {
-      if (m.latitud && m.longitud) {
-        L.marker([m.latitud, m.longitud]).addTo(this.mapa!)
-          .bindPopup(`<b>${m.categoria || 'Alarma'}</b><br>${m.descripcion || ''}`);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(this.mapa);
+    }
 
-        }
+    this.mapa.eachLayer((layer: any) => {
+      if (layer instanceof L.Marker) this.mapa.removeLayer(layer);
+    });
+
+    this.marcadores.forEach((alarma) => {
+      if (alarma.latitud && alarma.longitud) {
+        L.marker([alarma.latitud, alarma.longitud])
+          .addTo(this.mapa)
+          .bindPopup(`
+            <strong>${alarma.categoria}</strong><br>
+            ${alarma.descripcion || 'Sin descripción'}<br>
+            Fecha: ${alarma.fecha}<br>
+            Usuario: ${alarma.usuarioId}
+          `);
+      }
     });
   }
 }
