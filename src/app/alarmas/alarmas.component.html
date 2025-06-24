@@ -1,35 +1,16 @@
-<h2>Últimas 10 Alarmas Activas</h2>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Categoría</th><th>Fecha</th><th>Hora</th><th>Estado</th></tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let alarma of paginar(alarmasActivas, paginaActivas)">
-      <td>{{ alarma.id }}</td>
-      <td>{{ alarma.categoria }}</td>
-      <td>{{ alarma.fecha }}</td>
-      <td>{{ alarma.hora }}</td>
-      <td>{{ alarma.estado }}</td>
-    </tr>
-  </tbody>
-</table>
-<button (click)="anteriorActivas()" [disabled]="paginaActivas === 1">Anterior</button>
-<button (click)="siguienteActivas()" [disabled]="paginaActivas * tamanio >= alarmasActivas.length">Siguiente</button>
-<h2>Mapa de Alarmas</h2>
-<app-mapa [marcadores]="marcadoresMapa"></app-mapa>
-<h2>Alarmas con Ubicación</h2>
-<table>
-  <thead>
-    <tr><th>ID</th><th>Latitud</th><th>Longitud</th><th>Descripción</th></tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let alarma of paginar(alarmasMapa, paginaMapa)">
-      <td>{{ alarma.id }}</td>
-      <td>{{ alarma.latitud }}</td>
-      <td>{{ alarma.longitud }}</td>
-      <td>{{ alarma.descripcion_evento }}</td>
-    </tr>
-  </tbody>
-</table>
-<button (click)="anteriorMapa()" [disabled]="paginaMapa === 1">Anterior</button>
-<button (click)="siguienteMapa()" [disabled]="paginaMapa * tamanio >= alarmasMapa.length">Siguiente</button>
+<div class="contenedor-alarmas">
+  <h2>🔴 Alarmas Críticas</h2>
+  <ul>
+    <li *ngFor="let alarma of alarmasActivas">
+      <strong>{{ alarma.descripcion_evento }}</strong><br>
+      Categoría: {{ alarma.categoria }}<br>
+      Usuario: {{ alarma.usuario }}<br>
+      Estado: {{ alarma.estado }}
+    </li>
+  </ul>
+</div>
+
+<div class="contenedor-mapa">
+  <h2>🗺️ Alarmas con Ubicación</h2>
+  <app-mapa [marcadores]="marcadoresMapa"></app-mapa>
+</div>
