@@ -1,33 +1,6 @@
-<div class="contenedor-dashboard">
-  <div class="panel-filtros">
-    <section>
-      <label>Categorías</label>
-      <select [(ngModel)]="filtroCategoria">
-        <option value="">Todas</option>
-        <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
-      </select>
-    </section>
-
-    <section>
-      <label>Búsqueda libre</label>
-      <input type="text" [(ngModel)]="filtroBusqueda" placeholder="Buscar texto..." />
-    </section>
-
-    <section>
-      <label>Fecha</label>
-      <input type="date" [(ngModel)]="fechaInicio" />
-      <input type="date" [(ngModel)]="fechaFin" />
-    </section>
-
-    <section>
-      <label>Autor (ID)</label>
-      <input type="number" [(ngModel)]="filtroAutor" placeholder="ID de usuario" />
-    </section>
-
-    <button (click)="aplicarFiltros()">Aplicar Filtros</button>
-  </div>
-
-  <div class="panel-mapa">
-    <app-mapa [marcadores]="marcadoresFiltrados"></app-mapa>
-  </div>
-</div>
+<select [(ngModel)]="filtroCategoria">
+  <option value="">Todas</option>
+  <option *ngFor="let cat of categorias" [value]="cat.categoria">
+    {{ cat.categoria }}
+  </option>
+</select>
