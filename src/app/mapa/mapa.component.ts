@@ -9,18 +9,18 @@ import * as L from 'leaflet';
 export class MapaComponent implements AfterViewInit {
   @Input() marcadores: any[] = [];
 
-  private map: L.Map | undefined;
+  private map!: L.Map;
 
   ngAfterViewInit(): void {
-    this.initMap();
+    this.inicializarMapa();
     this.agregarMarcadores();
   }
 
-  private initMap(): void {
-    this.map = L.map('mapa').setView([-38.7359, -72.5904], 9); // centro en La Araucanía
+  private inicializarMapa(): void {
+    this.map = L.map('mapa').setView([-38.7359, -72.5904], 8);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
+      attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
   }
 
@@ -30,8 +30,8 @@ export class MapaComponent implements AfterViewInit {
     this.marcadores.forEach((m) => {
       if (m.latitud && m.longitud) {
         L.marker([m.latitud, m.longitud])
-          .addTo(this.map!)
-          .bindPopup(`<b>${m.categoria || 'Alarma'}</b><br>Usuario: ${m.autor}`);
+          .addTo(this.map)
+          .bindPopup(`<strong>${m.categoria || 'Alarma'}</strong><br>Usuario: ${m.autor || 'N/A'}`);
       }
     });
   }
