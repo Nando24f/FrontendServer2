@@ -76,9 +76,10 @@ export class AlarmasService {
   }
 
   // 14. Alarmas con coordenadas para el mapa
-  getAlarmasConUbicacion(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/conubicacion`);
-  }
+getAlarmasConUbicacion(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/mapa`);
+}
+
 
   // 15. Filtros combinados (categoría, texto, fechas, autor)
   getAlarmasFiltradas(params: {
