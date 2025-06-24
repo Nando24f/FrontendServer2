@@ -28,7 +28,7 @@ export class EmployeeComponent implements OnInit {
 
   cargarDatos(): void {
     // 1. Cargar últimas alarmas activas (QUERY_1)
-    this.alarmasService.getUltimasAlarmasActivas().subscribe({
+    this.alarmasService.getAlarmas().subscribe({
       next: (data) => this.ultimasAlarmas = data,
       error: (err) => console.error('Error al cargar alarmas activas:', err)
     });
@@ -49,7 +49,7 @@ export class EmployeeComponent implements OnInit {
     });
 
     // 4. Cargar alarmas críticas (QUERY_9)
-    this.alarmasService.getCriticasNoResueltas().subscribe({
+    this.alarmasService.getAlarmasCriticas().subscribe({
       next: (data) => this.estadisticas.criticas = data.length,
       error: (err) => console.error('Error al cargar alarmas críticas:', err)
     });

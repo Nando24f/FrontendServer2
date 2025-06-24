@@ -35,7 +35,6 @@ tamanio = 5;
 
   ngOnInit(): void {
     this.alarmasService.getCategorias().subscribe(data => this.estCat = data);
-    this.alarmasService.getEstados().subscribe(data => this.estEstado = data);
     if (this.usuarioId) {
       this.alarmasService.getAlarmaPorId(this.usuarioId).subscribe(data => this.estUsuarios = data);
     }
@@ -54,7 +53,7 @@ consultarPorRango() {
 }
 
 consultarCriticas() {
-  this.alarmasService.getCriticas().subscribe(data => this.alarmasCriticas = data);
+  this.alarmasService.getAlarmasCriticas().subscribe(data => this.alarmasCriticas = data);
 }
 
 consultarResueltas() {

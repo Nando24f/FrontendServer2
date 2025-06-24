@@ -51,7 +51,7 @@ export class ConsultasComponent implements OnInit {
   }
 
   consultarCriticas(): void {
-    this.alarmasService.getCriticas().subscribe(data => {
+    this.alarmasService.getAlarmasCriticas().subscribe(data => {
       this.alarmasCriticas = data;
       this.generarGrafico('graficoCriticas', data);
     });
