@@ -11,63 +11,65 @@ import { MapaComponent } from '../mapa/mapa.component';
   styleUrls: ['./mapa-filtrado.component.css']
 })
 export class MapaFiltradoComponent implements OnInit {
+  categorias: string[] = [];
+  marcadores: any[] = [];
+  marcadoresFiltrados: any[] = [];
+
   filtroCategoria: string = '';
   filtroBusqueda: string = '';
+  filtroAutor: number | null = null;
   fechaInicio: string = '';
   fechaFin: string = '';
-  filtroAutor: number | null = null;
-
-  categorias: string[] = [];
-  marcadoresFiltrados: any[] = [];
 
   constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
-    this.cargarCategorias();
-    this.cargarAlarmasConUbicacion(); // Carga inicial del mapa
+    this.obtenerCategorias();
+    this.cargarAlarmasConUbicacion();
   }
 
-  cargarCategorias(): void {
-    this.alarmasService.getCategorias().subscribe((cats: string[]) => {
-      this.categorias = cats;
+  obtenerCategorias(): void {
+    this.alarmasService.getCategorias().subscribe({
+      next: (cats) => {
+        this.categorias = cats;
+      },
+      error: (err) => {
+        console.error('Error al obtener categorías:', err);
+      }
     });
   }
 
   cargarAlarmasConUbicacion(): void {
-    this.alarmasService.getAlarmasConUbicacion().subscribe((alarmas: any[]) => {
-      this.marcadoresFiltrados = alarmas;
+    this.alarmasService.getAlarmasConUbicacion().subscribe({
+      next: (data) => {
+        this.marcadores = data;
+        this.filtrarMarcadores();
+      },
+      error: (err) => {
+        console.error('Error al cargar alarmas con ubicación:', err);
+      }
     });
   }
 
   aplicarFiltros(): void {
-    this.alarmasService.getAlarmasConUbicacion().subscribe((alarmas: any[]) => {
-      let filtradas = [...alarmas];
+    this.filtrarMarcadores();
+  }
 
-      if (this.filtroBusqueda) {
-        const texto = this.filtroBusqueda.toLowerCase();
-        filtradas = filtradas.filter(a =>
-          a.descripcion?.toLowerCase().includes(texto) || a.categoria?.toLowerCase().includes(texto)
-        );
-      }
+  filtrarMarcadores(): void {
+    this.marcadoresFiltrados = this.marcadores.filter((m) => {
+      const coincideCategoria = !this.filtroCategoria || m.categoria === this.filtroCategoria;
+      const coincideBusqueda = !this.filtroBusqueda || (m.descripcion || '').toLowerCase().includes(this.filtroBusqueda.toLowerCase());
+      const coincideAutor = !this.filtroAutor || m.autor == this.filtroAutor;
 
-      if (this.filtroCategoria) {
-        filtradas = filtradas.filter(a => a.categoria === this.filtroCategoria);
-      }
+      const fecha = m.fecha ? new Date(m.fecha) : null;
+      const desde = this.fechaInicio ? new Date(this.fechaInicio) : null;
+      const hasta = this.fechaFin ? new Date(this.fechaFin) : null;
 
-      if (this.filtroAutor != null) {
-        filtradas = filtradas.filter(a => a.usuario_id === this.filtroAutor);
-      }
+      const coincideFecha =
+        (!desde || (fecha && fecha >= desde)) &&
+        (!hasta || (fecha && fecha <= hasta));
 
-      if (this.fechaInicio && this.fechaFin) {
-        const inicio = new Date(this.fechaInicio);
-        const fin = new Date(this.fechaFin);
-        filtradas = filtradas.filter(a => {
-          const fecha = new Date(a.fecha);
-          return fecha >= inicio && fecha <= fin;
-        });
-      }
-
-      this.marcadoresFiltrados = filtradas;
+      return coincideCategoria && coincideBusqueda && coincideAutor && coincideFecha;
     });
   }
 }
