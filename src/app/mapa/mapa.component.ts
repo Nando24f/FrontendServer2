@@ -1,46 +1,33 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-mapa',
-  template: '<div id="mapa" style="height: 100%; width: 100%"></div>',
-  standalone: true
+  templateUrl: './mapa.component.html',
+  styleUrls: ['./mapa.component.css']
 })
-export class MapaComponent implements OnChanges {
-  @Input() marcadores: any[] = [];
+export class MapaComponent implements AfterViewInit {
+  @Input() marcadores: { lat: number; lng: number; label?: string }[] = [];
 
-  private mapa: any;
+  private mapa: L.Map | undefined;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['marcadores']) {
-      this.cargarMapa();
-    }
+  ngAfterViewInit(): void {
+    this.inicializarMapa();
   }
 
-  private cargarMapa(): void {
-    if (!this.mapa) {
-      this.mapa = L.map('mapa').setView([-38.7359, -72.5904], 13); // Temuco
+  private inicializarMapa(): void {
+    this.mapa = L.map('mapa').setView([-38.7359, -72.5904], 12);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(this.mapa);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(this.mapa);
+
+    if (this.mapa) {
+      this.marcadores.forEach(m => {
+        L.marker([m.lat, m.lng])
+          .addTo(this.mapa!)
+          .bindPopup(m.label || 'Sin descripción');
+      });
     }
-
-    this.mapa.eachLayer((layer: any) => {
-      if (layer instanceof L.Marker) this.mapa.removeLayer(layer);
-    });
-
-    this.marcadores.forEach((alarma) => {
-      if (alarma.latitud && alarma.longitud) {
-        L.marker([alarma.latitud, alarma.longitud])
-          .addTo(this.mapa)
-          .bindPopup(`
-            <strong>${alarma.categoria}</strong><br>
-            ${alarma.descripcion || 'Sin descripción'}<br>
-            Fecha: ${alarma.fecha}<br>
-            Usuario: ${alarma.usuarioId}
-          `);
-      }
-    });
   }
 }
