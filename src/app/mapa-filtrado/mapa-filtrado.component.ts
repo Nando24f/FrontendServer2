@@ -31,7 +31,7 @@ export class MapaFiltradoComponent implements OnInit {
   obtenerCategorias(): void {
     this.alarmasService.getCategorias().subscribe({
       next: (cats) => {
-        this.categorias = cats;
+        this.categorias = cats.map((cat: any) => cat.nombre);
       },
       error: (err) => {
         console.error('Error al obtener categorías:', err);
