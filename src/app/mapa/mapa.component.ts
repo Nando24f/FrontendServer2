@@ -7,27 +7,32 @@ import * as L from 'leaflet';
   styleUrls: ['./mapa.component.css']
 })
 export class MapaComponent implements AfterViewInit {
-  @Input() marcadores: { lat: number; lng: number; label?: string }[] = [];
+  @Input() marcadores: any[] = [];
 
-  private mapa: L.Map | undefined;
+  private map: L.Map | undefined;
 
   ngAfterViewInit(): void {
-    this.inicializarMapa();
+    this.initMap();
+    this.agregarMarcadores();
   }
 
-  private inicializarMapa(): void {
-    this.mapa = L.map('mapa').setView([-38.7359, -72.5904], 12);
+  private initMap(): void {
+    this.map = L.map('mapa').setView([-38.7359, -72.5904], 9); // centro en La Araucanía
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.mapa);
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
+  }
 
-    if (this.mapa) {
-      this.marcadores.forEach(m => {
-        L.marker([m.lat, m.lng])
-          .addTo(this.mapa!)
-          .bindPopup(m.label || 'Sin descripción');
-      });
-    }
+  private agregarMarcadores(): void {
+    if (!this.map) return;
+
+    this.marcadores.forEach((m) => {
+      if (m.latitud && m.longitud) {
+        L.marker([m.latitud, m.longitud])
+          .addTo(this.map!)
+          .bindPopup(`<b>${m.categoria || 'Alarma'}</b><br>Usuario: ${m.autor}`);
+      }
+    });
   }
 }
