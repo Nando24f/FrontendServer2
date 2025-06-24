@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { AlarmasService } from '../services/Alarmas.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MapaComponent } from '../mapa/mapa.component';
 
 @Component({
   selector: 'app-mapa-filtrado',
-  standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule, MapaComponent],
   templateUrl: './mapa-filtrado.component.html',
   styleUrls: ['./mapa-filtrado.component.css']
 })
@@ -17,65 +17,57 @@ export class MapaFiltradoComponent implements OnInit {
   fechaFin: string = '';
   filtroAutor: number | null = null;
 
-  categorias: any[] = [];
+  categorias: string[] = [];
   marcadoresFiltrados: any[] = [];
 
   constructor(private alarmasService: AlarmasService) {}
 
   ngOnInit(): void {
     this.cargarCategorias();
-    this.cargarTodasLasAlarmas();
+    this.cargarAlarmasConUbicacion(); // Carga inicial del mapa
   }
 
   cargarCategorias(): void {
-    this.alarmasService.getAlarmasPorCategoria('').subscribe(cats => {
+    this.alarmasService.getCategorias().subscribe((cats: string[]) => {
       this.categorias = cats;
     });
   }
 
-  cargarTodasLasAlarmas(): void {
-    this.alarmasService.getMapa().subscribe(res => {
-      this.marcadoresFiltrados = res;
+  cargarAlarmasConUbicacion(): void {
+    this.alarmasService.getAlarmasConUbicacion().subscribe((alarmas: any[]) => {
+      this.marcadoresFiltrados = alarmas;
     });
   }
 
   aplicarFiltros(): void {
-    if (this.filtroBusqueda) {
-      this.buscarPorTexto();
-    } else if (this.filtroCategoria) {
-      this.consultarPorCategoria();
-    } else if (this.filtroAutor) {
-      this.consultarPorUsuario();
-    } else if (this.fechaInicio && this.fechaFin) {
-      this.consultarPorRango();
-    } else {
-      this.cargarTodasLasAlarmas();
-    }
-  }
+    this.alarmasService.getAlarmasConUbicacion().subscribe((alarmas: any[]) => {
+      let filtradas = [...alarmas];
 
-  consultarPorCategoria(): void {
-    this.alarmasService.getAlarmasPorCategoria(this.filtroCategoria).subscribe(res => {
-      this.marcadoresFiltrados = res;
-    });
-  }
+      if (this.filtroBusqueda) {
+        const texto = this.filtroBusqueda.toLowerCase();
+        filtradas = filtradas.filter(a =>
+          a.descripcion?.toLowerCase().includes(texto) || a.categoria?.toLowerCase().includes(texto)
+        );
+      }
 
-  consultarPorUsuario(): void {
-    if (!this.filtroAutor) return;
-    this.alarmasService.getAlarmasPorUsuario(this.filtroAutor).subscribe(res => {
-      this.marcadoresFiltrados = res;
-    });
-  }
+      if (this.filtroCategoria) {
+        filtradas = filtradas.filter(a => a.categoria === this.filtroCategoria);
+      }
 
-  consultarPorRango(): void {
-    if (!this.fechaInicio || !this.fechaFin) return;
-    this.alarmasService.getAlarmasPorRango(this.fechaInicio, this.fechaFin).subscribe(res => {
-      this.marcadoresFiltrados = res;
-    });
-  }
+      if (this.filtroAutor != null) {
+        filtradas = filtradas.filter(a => a.usuario_id === this.filtroAutor);
+      }
 
-  buscarPorTexto(): void {
-    this.alarmasService.buscarAlarmas(this.filtroBusqueda).subscribe(res => {
-      this.marcadoresFiltrados = res;
+      if (this.fechaInicio && this.fechaFin) {
+        const inicio = new Date(this.fechaInicio);
+        const fin = new Date(this.fechaFin);
+        filtradas = filtradas.filter(a => {
+          const fecha = new Date(a.fecha);
+          return fecha >= inicio && fecha <= fin;
+        });
+      }
+
+      this.marcadoresFiltrados = filtradas;
     });
   }
 }
