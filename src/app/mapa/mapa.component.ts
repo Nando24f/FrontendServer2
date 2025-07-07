@@ -31,7 +31,7 @@ export class MapaComponent implements AfterViewInit, OnChanges {
 
     this.capaMarcadores = L.layerGroup().addTo(this.map);
 
-    this.actualizarMarcadores(); // por si marcadores ya están
+    this.actualizarMarcadores(); // por si marcadores ya están cargados al inicio
   }
 
   private actualizarMarcadores(): void {
@@ -43,13 +43,20 @@ export class MapaComponent implements AfterViewInit, OnChanges {
 
     this.marcadores.forEach((m) => {
       if (m.latitud && m.longitud) {
-        const marker = L.marker([m.latitud, m.longitud])
-          .bindPopup(`<strong>${m.categoria || 'Alarma'}</strong><br>Autor: ${m.autor || 'N/A'}`);
+        const popupContent = `
+          <strong>ID:</strong> ${m.id || 'N/A'}<br>
+          <strong>Categoría:</strong> ${m.categoria || 'N/A'}<br>
+          <strong>Descripción:</strong> ${m.descripcion || 'Sin descripción'}<br>
+          <strong>Fecha:</strong> ${m.fecha ? new Date(m.fecha).toLocaleString() : 'N/A'}<br>
+          <strong>Autor:</strong> ${m.autor || 'N/A'}
+        `;
+
+        const marker = L.marker([m.latitud, m.longitud]).bindPopup(popupContent);
         marker.addTo(this.capaMarcadores);
       }
     });
 
-    // Zoom automático si hay al menos uno válido
+    // Zoom automático si hay al menos un marcador
     const primer = this.marcadores.find(m => m.latitud && m.longitud);
     if (primer) {
       this.map.setView([primer.latitud, primer.longitud], 11);
