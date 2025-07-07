@@ -1,58 +1,60 @@
-<div class="panel-filtros">
-  <!-- Filtros existentes -->
-  <label>Categoría</label>
-  <select [(ngModel)]="filtroCategoria">
-    <option value="">Todas</option>
-    <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
-  </select>
+<div class="contenedor-principal">
+  <!-- Panel lateral con filtros -->
+  <div class="panel-filtros">
+    <label for="categoria">Categoría</label>
+    <select [(ngModel)]="filtroCategoria" id="categoria">
+      <option value="">Todas</option>
+      <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+    </select>
 
-  <label>Fecha</label>
-  <input type="date" [(ngModel)]="fechaInicio" />
-  <input type="date" [(ngModel)]="fechaFin" />
+    <label for="fechaInicio">Fecha</label>
+    <input type="date" id="fechaInicio" [(ngModel)]="fechaInicio" />
+    <input type="date" id="fechaFin" [(ngModel)]="fechaFin" />
 
-  <label>Autor (ID)</label>
-  <input type="number" [(ngModel)]="filtroAutor" placeholder="ID de usuario" />
+    <label for="autor">Autor (ID)</label>
+    <input type="number" id="autor" [(ngModel)]="filtroAutor" placeholder="ID de usuario" />
 
-  <button (click)="aplicarFiltros()">Aplicar Filtros Locales</button>
-
-  <hr />
-  <div *ngIf="marcadorSeleccionado" class="detalle-marcador">
-    <h3>Detalle de la Alarma</h3>
-    <p><strong>ID:</strong> {{ marcadorSeleccionado.id }}</p>
-    <p><strong>Descripción:</strong> {{ marcadorSeleccionado.descripcion }}</p>
-    <p><strong>Categoría:</strong> {{ marcadorSeleccionado.categoria }}</p>
-    <p><strong>Autor:</strong> {{ marcadorSeleccionado.autor }}</p>
-    <p><strong>Fecha:</strong> {{ marcadorSeleccionado.fecha }}</p>
-    <!-- Agrega más campos si los tienes -->
+    <button (click)="aplicarFiltros()">Aplicar Filtros Locales</button>
   </div>
 
-  <!-- Botones nuevos -->
-  <button (click)="cargarTodas()">Todas</button>
-  <button (click)="cargarResueltas()">Resueltas</button>
-  <button (click)="cargarCriticas()">Críticas</button>
-  <button (click)="cargarPorCategoria()">Por Categoría (backend)</button>
-  <button (click)="cargarPorUsuario()">Por Usuario ID</button>
-  <button (click)="cargarPorFecha()">Por Fecha (backend)</button>
-  <button (click)="cargarUna()">Una sola alarma</button>
+  <!-- Mapa y contenido -->
+  <div class="panel-mapa">
+    <!-- Aquí se carga el componente del mapa -->
+    <app-mapa
+      [marcadores]="marcadoresFiltrados"
+      (marcadorClick)="seleccionarMarcador($event)">
+    </app-mapa>
+
+    <!-- Detalle si se selecciona un marcador -->
+    <div *ngIf="marcadorSeleccionado" class="detalle-marcador">
+      <h3>Detalle de la Alarma</h3>
+      <p><strong>ID:</strong> {{ marcadorSeleccionado.id }}</p>
+      <p><strong>Descripción:</strong> {{ marcadorSeleccionado.descripcion }}</p>
+      <p><strong>Categoría:</strong> {{ marcadorSeleccionado.categoria }}</p>
+      <p><strong>Autor:</strong> {{ marcadorSeleccionado.autor }}</p>
+      <p><strong>Fecha:</strong> {{ marcadorSeleccionado.fecha }}</p>
+    </div>
+
+    <!-- Tabla al final (pie de página) -->
+    <table class="tabla-resultados" *ngIf="marcadoresFiltrados.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Autor</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of marcadoresFiltrados" (click)="seleccionarMarcador(m)">
+          <td>{{ m.id }}</td>
+          <td>{{ m.descripcion }}</td>
+          <td>{{ m.categoria }}</td>
+          <td>{{ m.autor }}</td>
+          <td>{{ m.fecha }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-<table class="tabla-resultados" *ngIf="marcadoresFiltrados.length > 0">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Descripción</th>
-      <th>Categoría</th>
-      <th>Autor</th>
-      <th>Fecha</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let m of marcadoresFiltrados" (click)="seleccionarMarcador(m)">
-      <td>{{ m.id }}</td>
-      <td>{{ m.descripcion }}</td>
-      <td>{{ m.categoria }}</td>
-      <td>{{ m.autor }}</td>
-      <td>{{ m.fecha }}</td>
-    </tr>
-  </tbody>
-</table>
-<button (click)="limpiarFiltros()">Limpiar Filtros</button>
