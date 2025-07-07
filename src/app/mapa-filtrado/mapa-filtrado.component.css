@@ -1,74 +1,53 @@
-/* Contenedor principal tipo dashboard */
-.contenedor-dashboard {
+.contenedor-principal {
   display: flex;
-  flex-direction: row;
-  height: 100vh;
-  width: 100%;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* Panel lateral con filtros */
-.panel-filtros {
-  width: 300px;
-  min-width: 250px;
-  background-color: #f3f4f6;
+  gap: 20px;
   padding: 20px;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  align-items: flex-start;
 }
 
-/* Panel de mapa */
+.panel-lateral {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .panel-mapa {
-  flex: 1;
-  height: 100%;
+  flex-grow: 1;
+  position: relative;
 }
 
-/* Estilo para los campos */
-section {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 6px;
-  color: #333;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="date"],
-select {
+.tabla-resultados {
   width: 100%;
-  padding: 8px;
+  border-collapse: collapse;
+}
+
+.tabla-resultados th,
+.tabla-resultados td {
   border: 1px solid #ccc;
-  border-radius: 8px;
+  padding: 6px;
   font-size: 14px;
-  box-sizing: border-box;
 }
 
-/* Botón de filtros */
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
+.tabla-resultados tr:hover {
+  background-color: #f0f8ff;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #2563eb;
+.detalle-marcador {
+  margin-top: 15px;
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
-
-/* Scroll en filtros si hay muchos */
-.panel-filtros::-webkit-scrollbar {
-  width: 6px;
-}
-.panel-filtros::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 10px;
-}
+.detalle-marcador h3 {
+  margin: 0;
+  font-size: 16px;
+} 

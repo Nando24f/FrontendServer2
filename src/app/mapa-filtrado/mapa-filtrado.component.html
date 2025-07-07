@@ -1,41 +1,25 @@
 <div class="contenedor-principal">
-  <!-- Panel lateral con filtros -->
-  <div class="panel-filtros">
-    <label for="categoria">Categoría</label>
-    <select [(ngModel)]="filtroCategoria" id="categoria">
-      <option value="">Todas</option>
-      <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
-    </select>
+  <!-- Panel lateral con filtros y tabla -->
+  <div class="panel-lateral">
+    <!-- Filtros -->
+    <div class="filtros">
+      <label for="categoria">Categoría</label>
+      <select [(ngModel)]="filtroCategoria" id="categoria">
+        <option value="">Todas</option>
+        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+      </select>
 
-    <label for="fechaInicio">Fecha</label>
-    <input type="date" id="fechaInicio" [(ngModel)]="fechaInicio" />
-    <input type="date" id="fechaFin" [(ngModel)]="fechaFin" />
+      <label for="fechaInicio">Fecha</label>
+      <input type="date" id="fechaInicio" [(ngModel)]="fechaInicio" />
+      <input type="date" id="fechaFin" [(ngModel)]="fechaFin" />
 
-    <label for="autor">Autor (ID)</label>
-    <input type="number" id="autor" [(ngModel)]="filtroAutor" placeholder="ID de usuario" />
+      <label for="autor">Autor (ID)</label>
+      <input type="number" id="autor" [(ngModel)]="filtroAutor" placeholder="ID de usuario" />
 
-    <button (click)="aplicarFiltros()">Aplicar Filtros Locales</button>
-  </div>
-
-  <!-- Mapa y contenido -->
-  <div class="panel-mapa">
-    <!-- Aquí se carga el componente del mapa -->
-    <app-mapa
-      [marcadores]="marcadoresFiltrados"
-      (marcadorClick)="seleccionarMarcador($event)">
-    </app-mapa>
-
-    <!-- Detalle si se selecciona un marcador -->
-    <div *ngIf="marcadorSeleccionado" class="detalle-marcador">
-      <h3>Detalle de la Alarma</h3>
-      <p><strong>ID:</strong> {{ marcadorSeleccionado.id }}</p>
-      <p><strong>Descripción:</strong> {{ marcadorSeleccionado.descripcion }}</p>
-      <p><strong>Categoría:</strong> {{ marcadorSeleccionado.categoria }}</p>
-      <p><strong>Autor:</strong> {{ marcadorSeleccionado.autor }}</p>
-      <p><strong>Fecha:</strong> {{ marcadorSeleccionado.fecha }}</p>
+      <button (click)="aplicarFiltros()">Aplicar Filtros Locales</button>
     </div>
 
-    <!-- Tabla al final (pie de página) -->
+    <!-- Tabla de resultados -->
     <table class="tabla-resultados" *ngIf="marcadoresFiltrados.length > 0">
       <thead>
         <tr>
@@ -56,5 +40,23 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Mapa -->
+  <div class="panel-mapa">
+    <app-mapa
+      [marcadores]="marcadoresFiltrados"
+      (marcadorClick)="seleccionarMarcador($event)">
+    </app-mapa>
+
+    <!-- Detalle del marcador -->
+    <div *ngIf="marcadorSeleccionado" class="detalle-marcador">
+      <h3>Detalle de la Alarma</h3>
+      <p><strong>ID:</strong> {{ marcadorSeleccionado.id }}</p>
+      <p><strong>Descripción:</strong> {{ marcadorSeleccionado.descripcion }}</p>
+      <p><strong>Categoría:</strong> {{ marcadorSeleccionado.categoria }}</p>
+      <p><strong>Autor:</strong> {{ marcadorSeleccionado.autor }}</p>
+      <p><strong>Fecha:</strong> {{ marcadorSeleccionado.fecha }}</p>
+    </div>
   </div>
 </div>
