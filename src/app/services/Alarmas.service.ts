@@ -137,7 +137,7 @@ export class AlarmasService {
     });
   }
   verificarLoginAdmin(rut: string, clave: string): Observable<any> {
-  return this.http.get(`${this.apiUrl}/login/verificar/admin`, {
+  return this.http.get(`/api/alarmas/login/verificar/admin`, {
     params: { rut, clave }
   });
 }
