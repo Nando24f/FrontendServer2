@@ -1,0 +1,13 @@
+<h2>Acceso administrador</h2>
+
+<form (ngSubmit)="login()">
+  <label for="rut">RUT:</label>
+  <input type="text" [(ngModel)]="rut" name="rut" required />
+
+  <label for="clave">Clave:</label>
+  <input type="password" [(ngModel)]="clave" name="clave" required />
+
+  <button type="submit">Ingresar</button>
+</form>
+
+<p *ngIf="mensaje" style="color: red;">{{ mensaje }}</p>

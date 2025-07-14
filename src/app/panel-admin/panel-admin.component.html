@@ -1,0 +1,32 @@
+<h2>Panel Administrativo - Crear Usuario</h2>
+
+<form (ngSubmit)="crearUsuario()">
+  <fieldset>
+    <legend>Credenciales</legend>
+    <input placeholder="RUT" [(ngModel)]="rut" name="rut" required />
+    <input type="password" placeholder="Clave" [(ngModel)]="clave" name="clave" required />
+    <select [(ngModel)]="categoria" name="categoria">
+      <option value="usuario">Usuario</option>
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>Datos Personales</legend>
+    <input placeholder="Nombre completo" [(ngModel)]="nombre" name="nombre" />
+    <input placeholder="Dirección" [(ngModel)]="direccion" name="direccion" />
+    <input placeholder="Correo electrónico" [(ngModel)]="email" name="email" />
+    <input placeholder="Teléfono" [(ngModel)]="telefono" name="telefono" />
+  </fieldset>
+
+  <fieldset>
+    <legend>Contacto de Emergencia</legend>
+    <input placeholder="Nombre contacto" [(ngModel)]="contactoNombre" name="contactoNombre" />
+    <input placeholder="Dirección contacto" [(ngModel)]="contactoDireccion" name="contactoDireccion" />
+    <input placeholder="Email contacto" [(ngModel)]="contactoEmail" name="contactoEmail" />
+    <input placeholder="Teléfono contacto" [(ngModel)]="contactoTelefono" name="contactoTelefono" />
+  </fieldset>
+
+  <button type="submit">Registrar Usuario</button>
+</form>
+
+<p *ngIf="mensaje" style="margin-top: 10px;">{{ mensaje }}</p>

@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class AlarmasService {
   private apiUrl = '/api/alarmas';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // 1. Listar todas las alarmas
   getAlarmas(): Observable<any[]> {
@@ -76,9 +76,9 @@ export class AlarmasService {
   }
 
   // 14. Alarmas con coordenadas para el mapa
-getAlarmasConUbicacion(): Observable<any> {
-  return this.http.get(`${this.apiUrl}/mapa`);
-}
+  getAlarmasConUbicacion(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/mapa`);
+  }
 
 
   // 15. Filtros combinados (categoría, texto, fechas, autor)
@@ -98,5 +98,48 @@ getAlarmasConUbicacion(): Observable<any> {
 
     return this.http.get<any[]>(`${this.apiUrl}/filtradas?${query.toString()}`);
   }
-  
+
+  getLogin(rut: string, clave: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/login/verificar`, {
+      params: { rut, clave }
+    });
+  }
+
+  crearUsuarioLogin(rut: string, clave: string, categoria: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/login/crear`, {
+      params: { rut, clave, categoria }
+    });
+  }
+
+  crearUsuarioDatos(
+    nombre: string,
+    rut: string,
+    direccion: string,
+    email: string,
+    telefono: string,
+    contactoNombre: string,
+    contactoDireccion: string,
+    contactoEmail: string,
+    contactoTelefono: string
+  ): Observable<any> {
+    return this.http.get(`${this.apiUrl}/usuario/datos/crear`, {
+      params: {
+        nombre,
+        rut,
+        direccion,
+        email,
+        telefono,
+        contactoNombre,
+        contactoDireccion,
+        contactoEmail,
+        contactoTelefono
+      }
+    });
+  }
+  verificarLoginAdmin(rut: string, clave: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/login/verificar/admin`, {
+      params: { rut, clave }
+    });
+  }
+
 }
