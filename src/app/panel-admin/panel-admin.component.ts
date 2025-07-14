@@ -14,7 +14,8 @@ export class PanelAdminComponent {
   // Campos de usuarios_login
   rut: string = '';
   clave: string = '';
-  categoria: string = 'usuario';
+  categoria: string = 'usuario'; // valor por defecto
+  categoriasDisponibles: string[] = ['usuario', 'admin']; // lista para el select
 
   // Campos de usuarios_datos
   nombre: string = '';
@@ -59,6 +60,7 @@ export class PanelAdminComponent {
   limpiarFormulario() {
     this.rut = '';
     this.clave = '';
+    this.categoria = 'usuario';
     this.nombre = '';
     this.direccion = '';
     this.email = '';
