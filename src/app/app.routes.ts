@@ -14,7 +14,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'alarmas', pathMatch: 'full' },
   { path: 'mapa-avanzado', component: MapaFiltradoComponent },
   { path: '', redirectTo: 'mapa-avanzado', pathMatch: 'full' },
-  { path: '', component: LoginAdminComponent },
+  { path: 'login', component: LoginAdminComponent },
   { path: 'admin', component: PanelAdminComponent }
 ];
 
