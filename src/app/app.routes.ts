@@ -9,7 +9,8 @@ import { AuthGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'mapa-avanzado', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'mapa', redirectTo: 'mapa-avanzado', pathMatch: 'full' },
   { path: 'login', component: LoginAdminComponent },
   { path: 'admin', component: PanelAdminComponent, canActivate: [AuthGuard] },
   { path: 'mapa-avanzado', component: MapaFiltradoComponent }
