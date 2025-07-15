@@ -107,7 +107,7 @@ export class AlarmasService {
 
   crearUsuarioLogin(rut: string, clave: string, categoria: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/login/crear`, {
-      params: { rut, clave, categoria }
+      params: { rut, clave, categoria },    responseType: 'text' as 'json' // 👈 También aquí
     });
   }
 
@@ -133,7 +133,7 @@ export class AlarmasService {
         contactoDireccion,
         contactoEmail,
         contactoTelefono
-      }
+      },    responseType: 'text' as 'json' // 👈 También aquí
     });
   }
   verificarLoginAdmin(rut: string, clave: string): Observable<any> {
