@@ -143,7 +143,7 @@ export class AlarmasService {
 }
 
 getDatosUsuarioPorRut(rut: string): Observable<any[]> {
-  return this.http.get<any[]>(`${this.apiUrl}/usuario/datosCompletos`, {
+  return this.http.get<any[]>(`${this.apiUrl}/usuario/datos/detalles`, {
     params: { rut }
   });
 }
