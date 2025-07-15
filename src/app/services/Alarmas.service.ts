@@ -151,5 +151,36 @@ getDatosUsuarioPorRut(rut: string): Observable<any[]> {
 getUltimaAlarma(): Observable<any> {
   return this.http.get<any>('/api/query21');
 }
+// 17. Obtener alarmas creadas en los últimos 5 minutos
+getAlarmasRecientes(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/recientes`);
+}
+// 18. Enviar (crear) una nueva alarma
+enviarAlarma(data: {
+  usuario_id: number;
+  nombre_usuario: string;
+  direccion_usuario: string;
+  categoria: string;
+  descripcion_evento: string;
+  prioridad: string;
+  estado: string;
+  latitud: number;
+  longitud: number;
+}): Observable<any> {
+  return this.http.get(`${this.apiUrl}/crear`, {
+    params: {
+      usuario_id: data.usuario_id,
+      nombre_usuario: data.nombre_usuario,
+      direccion_usuario: data.direccion_usuario,
+      categoria: data.categoria,
+      descripcion_evento: data.descripcion_evento,
+      prioridad: data.prioridad,
+      estado: data.estado,
+      latitud: data.latitud.toString(),
+      longitud: data.longitud.toString()
+    },
+    responseType: 'text' as 'json'
+  });
+}
 
 }
