@@ -1,33 +1,47 @@
-<h2>Panel Administrativo - Crear Usuario</h2>
+<h2>🟦 Crear Usuario (Login)</h2>
+<fieldset>
+  <label for="rut">RUT:</label>
+  <input [(ngModel)]="rut" name="rut" required />
 
-<form (ngSubmit)="crearUsuario()">
-    <fieldset>
-        <legend>Credenciales</legend>
-        <input placeholder="RUT" [(ngModel)]="rut" name="rut" required />
-        <input type="password" placeholder="Clave" [(ngModel)]="clave" name="clave" required />
-        <label for="categoria">Categoría:</label>
-        <select [(ngModel)]="categoria" name="categoria" required>
-            <option *ngFor="let cat of categoriasDisponibles" [value]="cat">{{ cat }}</option>
-        </select>
-    </fieldset>
+  <label for="clave">Clave:</label>
+  <input [(ngModel)]="clave" name="clave" required type="password" />
 
-    <fieldset>
-        <legend>Datos Personales</legend>
-        <input placeholder="Nombre completo" [(ngModel)]="nombre" name="nombre" />
-        <input placeholder="Dirección" [(ngModel)]="direccion" name="direccion" />
-        <input placeholder="Correo electrónico" [(ngModel)]="email" name="email" />
-        <input placeholder="Teléfono" [(ngModel)]="telefono" name="telefono" />
-    </fieldset>
+  <label for="categoria">Categoría:</label>
+  <select [(ngModel)]="categoria" name="categoria" required>
+    <option value="usuario">Usuario</option>
+    <option value="admin">Administrador</option>
+  </select>
+</fieldset>
+<button (click)="crearUsuarioLogin()">Crear Usuario</button>
+<p>{{ mensajeLogin }}</p>
 
-    <fieldset>
-        <legend>Contacto de Emergencia</legend>
-        <input placeholder="Nombre contacto" [(ngModel)]="contactoNombre" name="contactoNombre" />
-        <input placeholder="Dirección contacto" [(ngModel)]="contactoDireccion" name="contactoDireccion" />
-        <input placeholder="Email contacto" [(ngModel)]="contactoEmail" name="contactoEmail" />
-        <input placeholder="Teléfono contacto" [(ngModel)]="contactoTelefono" name="contactoTelefono" />
-    </fieldset>
+<hr />
 
-    <button type="submit">Registrar Usuario</button>
-</form>
+<h2>🟩 Agregar Datos Personales</h2>
+<fieldset>
+  <label for="nombre">Nombre:</label>
+  <input [(ngModel)]="nombre" name="nombre" required />
 
-<p *ngIf="mensaje" style="margin-top: 10px;">{{ mensaje }}</p>
+  <label for="direccion">Dirección:</label>
+  <input [(ngModel)]="direccion" name="direccion" required />
+
+  <label for="email">Email:</label>
+  <input [(ngModel)]="email" name="email" required />
+
+  <label for="telefono">Teléfono:</label>
+  <input [(ngModel)]="telefono" name="telefono" required />
+
+  <label for="contactoNombre">Nombre contacto:</label>
+  <input [(ngModel)]="contactoNombre" name="contactoNombre" required />
+
+  <label for="contactoDireccion">Dirección contacto:</label>
+  <input [(ngModel)]="contactoDireccion" name="contactoDireccion" required />
+
+  <label for="contactoEmail">Email contacto:</label>
+  <input [(ngModel)]="contactoEmail" name="contactoEmail" required />
+
+  <label for="contactoTelefono">Teléfono contacto:</label>
+  <input [(ngModel)]="contactoTelefono" name="contactoTelefono" required />
+</fieldset>
+<button (click)="agregarDatosUsuario()">Agregar Datos</button>
+<p>{{ mensajeDatos }}</p>
