@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AlarmasService } from '../services/Alarmas.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-panel-admin',
@@ -29,7 +30,7 @@ export class PanelAdminComponent {
   mensajeLogin: string = '';
   mensajeDatos: string = '';
 
-  constructor(private alarmasService: AlarmasService) {}
+  constructor(private alarmasService: AlarmasService,private router: Router) {}
 
   crearUsuarioLogin() {
     this.alarmasService.crearUsuarioLogin(this.rut, this.clave, this.categoria).subscribe({
@@ -66,5 +67,9 @@ export class PanelAdminComponent {
     this.contactoDireccion = '';
     this.contactoEmail = '';
     this.contactoTelefono = '';
+  }
+   cerrarSesion() {
+    localStorage.removeItem('adminAutenticado');
+    this.router.navigate(['/login']);
   }
 }

@@ -40,8 +40,5 @@ export class LoginAdminComponent {
     });
   }
 
-  cerrarSesion() {
-    localStorage.removeItem('adminAutenticado');
-    this.router.navigate(['/login']);
-  }
+  
 }
