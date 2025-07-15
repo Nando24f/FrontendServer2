@@ -25,7 +25,7 @@ export class LoginAdminComponent {
         if (usuario && usuario.categoria === 'admin') {
           // Guardar estado de sesión
           localStorage.setItem('adminAutenticado', 'true');
-          this.router.navigate(['/panel-admin']);
+          this.router.navigate(['/admin']);
         } else {
           this.mensaje = 'Acceso denegado: no eres administrador.';
         }
@@ -42,6 +42,6 @@ export class LoginAdminComponent {
 
   cerrarSesion() {
     localStorage.removeItem('adminAutenticado');
-    this.router.navigate(['/login-admin']);
+    this.router.navigate(['/login']);
   }
 }
