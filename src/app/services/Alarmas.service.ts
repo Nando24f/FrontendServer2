@@ -143,9 +143,13 @@ export class AlarmasService {
 }
 
 getDatosUsuarioPorRut(rut: string): Observable<any[]> {
-  return this.http.get<any[]>(`${this.apiUrl}/usuario/datos/detalles`, {
+  return this.http.get<any[]>(`${this.apiUrl}/datos/por-rut`, {
     params: { rut }
   });
+}
+// 16. Obtener la última alarma registrada (Query 21)
+getUltimaAlarma(): Observable<any> {
+  return this.http.get<any>('/api/query21');
 }
 
 }
